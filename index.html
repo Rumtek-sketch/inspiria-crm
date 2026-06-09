@@ -253,7 +253,7 @@ footer{
 
   <div class="hero-badge">
     <div class="badge-dot"></div>
-    Live HubSpot Integration &middot; June 2026
+    Live HubSpot Integration &middot; <span id="heroBadgeDate"></span>
   </div>
 
   <div class="hero-logo-wrap">
@@ -287,23 +287,23 @@ footer{
 
   <div class="hero-stats">
     <div class="stat">
-      <div class="stat-val">21,534</div>
+      <div class="stat-val" id="hContacts">—</div>
       <div class="stat-lbl">Total Contacts</div>
     </div>
     <div class="stat">
-      <div class="stat-val">2,751</div>
+      <div class="stat-val" id="hDeals">—</div>
       <div class="stat-lbl">Active Deals</div>
     </div>
     <div class="stat">
-      <div class="stat-val">360</div>
+      <div class="stat-val" id="hAdmissions">—</div>
       <div class="stat-lbl">Admissions Done</div>
     </div>
     <div class="stat">
-      <div class="stat-val">889</div>
+      <div class="stat-val" id="hTouched">—</div>
       <div class="stat-lbl">Leads / Week</div>
     </div>
     <div class="stat">
-      <div class="stat-val">9</div>
+      <div class="stat-val" id="hOwners">—</div>
       <div class="stat-lbl">Contact Owners</div>
     </div>
   </div>
@@ -410,33 +410,33 @@ footer{
 <section class="snapshot-section" id="data">
   <div class="snap-inner">
     <div class="reveal">
-      <div class="section-label">Live Data &middot; June 8, 2026</div>
+      <div class="section-label" id="snapLabel">Live Data</div>
       <h2 class="section-title">Your CRM at a Glance</h2>
       <p class="section-desc">Current numbers from HubSpot &mdash; refreshed every time you open the dashboard.</p>
     </div>
     <div class="snap-grid">
       <div class="snap-card reveal">
-        <div class="snap-val">21,534</div>
+        <div class="snap-val" id="sContacts">—</div>
         <div class="snap-lbl">Total Contacts</div>
       </div>
       <div class="snap-card reveal">
-        <div class="snap-val orange">360</div>
+        <div class="snap-val orange" id="sAdmissions">—</div>
         <div class="snap-lbl">Admissions Done</div>
       </div>
       <div class="snap-card reveal">
-        <div class="snap-val">641</div>
+        <div class="snap-val" id="sAppts">—</div>
         <div class="snap-lbl">Appts Scheduled</div>
       </div>
       <div class="snap-card reveal">
-        <div class="snap-val teal">889</div>
+        <div class="snap-val teal" id="sTouched">—</div>
         <div class="snap-lbl">Touched / Week</div>
       </div>
       <div class="snap-card reveal">
-        <div class="snap-val gold">1,702</div>
+        <div class="snap-val gold" id="sLost">—</div>
         <div class="snap-lbl">Closed Lost</div>
       </div>
       <div class="snap-card reveal">
-        <div class="snap-val">962</div>
+        <div class="snap-val" id="sDormant">—</div>
         <div class="snap-lbl">Dormant 120d+</div>
       </div>
     </div>
@@ -514,10 +514,71 @@ footer{
     <a href="dashboard.html">Reports</a>
     <a href="#features">Features</a>
   </div>
-  <div class="footer-copy">&copy; 2026 Inspiria Knowledge Campus &middot; HubSpot CRM &middot; SYSTEMS@inspiria.edu.in</div>
+  <div class="footer-copy">&copy; <span id="footerYear">2026</span> Inspiria Knowledge Campus &middot; HubSpot CRM &middot; SYSTEMS@inspiria.edu.in</div>
 </footer>
 
 <script>
+// ── LIVE DATA (single source of truth, mirrors dashboard.html) ──
+const LIVE = {
+  contacts: 21534,
+  deals: {appointmentScheduled:641, formSold:47, admissionDone:360, closedWon:1, closedLost:1702},
+  owners: [
+    {total:9640,touched:277},{total:8462,touched:175},{total:1144,touched:166},
+    {total:997,touched:128},{total:841,touched:137},{total:353,touched:5},
+    {total:4,touched:0},{total:2,touched:0},{total:2,touched:1}
+  ],
+  reEngagement:{dormant:962}
+};
+const TOTAL_DEALS   = Object.values(LIVE.deals).reduce((s,v)=>s+v,0);
+const TOTAL_TOUCHED = LIVE.owners.reduce((s,o)=>s+o.touched,0);
+
+function fmt(n){ return n.toLocaleString('en-IN'); }
+
+function animateVal(id, to){
+  const el = document.getElementById(id); if(!el) return;
+  const dur=900, start=performance.now();
+  (function tick(now){
+    const p=Math.min((now-start)/dur,1), e=1-Math.pow(1-p,3);
+    el.textContent = fmt(Math.round(e*to));
+    if(p<1) requestAnimationFrame(tick);
+  })(performance.now());
+}
+
+function formatDate(d){
+  return d.toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+}
+function formatMonthYear(d){
+  return d.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
+}
+
+window.addEventListener('load', () => {
+  const now = new Date();
+
+  // Badge & snapshot label
+  document.getElementById('heroBadgeDate').textContent = formatMonthYear(now);
+  document.getElementById('snapLabel').textContent = 'Live Data · ' + formatDate(now);
+
+  // Footer year
+  const fyEl = document.getElementById('footerYear');
+  if(fyEl) fyEl.textContent = now.getFullYear();
+
+  // Hero stats (animated counters)
+  animateVal('hContacts',   LIVE.contacts);
+  animateVal('hDeals',      TOTAL_DEALS);
+  animateVal('hAdmissions', LIVE.deals.admissionDone);
+  animateVal('hTouched',    TOTAL_TOUCHED);
+  animateVal('hOwners',     LIVE.owners.length);
+
+  // Snapshot stats (animated counters)
+  animateVal('sContacts',   LIVE.contacts);
+  animateVal('sAdmissions', LIVE.deals.admissionDone);
+  animateVal('sAppts',      LIVE.deals.appointmentScheduled);
+  animateVal('sTouched',    TOTAL_TOUCHED);
+  animateVal('sLost',       LIVE.deals.closedLost);
+  animateVal('sDormant',    LIVE.reEngagement.dormant);
+});
+
+// Scroll reveal
 const observer = new IntersectionObserver(entries => {
   entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
 }, {threshold: 0.12});

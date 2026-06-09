@@ -511,7 +511,7 @@ tbody tr:last-child td{border-bottom:none}
           <div class="chart-card">
             <div class="chart-hdr">
               <div class="chart-title">Deal Stage Pipeline</div>
-              <span class="chart-meta">June 8, 2026</span>
+              <span class="chart-meta chart-meta-date"></span>
             </div>
             <div class="chart-body"><canvas id="stageChart"></canvas></div>
           </div>
@@ -692,7 +692,10 @@ function renderDashboard(){
   animateVal('kpiAdmissions',0,LIVE.deals.admissionDone);
   animateVal('kpiTouched',0,TOTAL_TOUCHED);
   animateVal('kpiLost',0,LIVE.deals.closedLost);
-  document.getElementById('lastUpdated').textContent='June 8, 2026 · Live';
+  const _now = new Date();
+  const _dateStr = _now.toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('lastUpdated').textContent = _dateStr + ' · Live';
+  document.querySelectorAll('.chart-meta-date').forEach(el => el.textContent = _dateStr);
   renderCharts(); renderOwnerTable(); renderStageTable();
 }
 
@@ -952,7 +955,7 @@ function buildReport(q){
       {l:'Admission Done',v:LIVE.deals.admissionDone,p:Math.round(LIVE.deals.admissionDone/TOTAL_DEALS*100),c:'#00BDA5'},
       {l:'Closed Lost',v:LIVE.deals.closedLost,p:Math.round(LIVE.deals.closedLost/TOTAL_DEALS*100),c:'#F2545B'},
     ];
-    summary=`Complete HubSpot CRM snapshot for ${INST} as of June 8, 2026. ${LIVE.contacts.toLocaleString()} contacts, ${TOTAL_DEALS.toLocaleString()} deals, ${LIVE.deals.admissionDone} admissions, ${TOTAL_TOUCHED} leads touched this week.`;
+    summary=`Complete HubSpot CRM snapshot for ${INST} as of ${new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})}. ${LIVE.contacts.toLocaleString()} contacts, ${TOTAL_DEALS.toLocaleString()} deals, ${LIVE.deals.admissionDone} admissions, ${TOTAL_TOUCHED} leads touched this week.`;
     insights=['Admissions jumped to 360 — up 21.6% from April (296)','61.9% Closed Lost rate needs urgent investigation','Only 4.5% weekly activity rate — most leads untouched each week','962 dormant old leads represent an immediate re-engagement opportunity'];
   }
   return {type,title,kpis,bars,rows,cols,insights,summary,date:new Date()};
