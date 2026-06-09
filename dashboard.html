@@ -416,7 +416,7 @@ tbody tr:last-child td{border-bottom:none}
   </div>
 
   <div class="header-right">
-    <div class="live-badge"><div class="live-dot"></div>Live · HubSpot</div>
+    <div class="live-badge" id="liveBadge"><div class="live-dot" id="liveDot"></div><span id="liveBadgeText">Connecting…</span></div>
     <span class="last-updated" id="lastUpdated">—</span>
     <button class="icon-btn" onclick="refreshDashboard()" title="Refresh">↺</button>
     <button class="icon-btn" onclick="openConfig()" title="Settings">⚙</button>
@@ -612,6 +612,10 @@ tbody tr:last-child td{border-bottom:none}
     </div>
     <div class="modal-b">
       <div class="field">
+        <label>HubSpot Private App Token</label>
+        <input type="password" id="cfgHS" placeholder="pat-na1-xxxxxxxx-...">
+      </div>
+      <div class="field">
         <label>Claude API Key (for AI summaries)</label>
         <input type="password" id="cfgClaude" placeholder="sk-ant-api03-...">
       </div>
@@ -620,7 +624,7 @@ tbody tr:last-child td{border-bottom:none}
         <input type="text" id="cfgInst" value="Inspiria Knowledge Campus">
       </div>
       <div style="padding:10px 12px;background:var(--hs-orange-light);border:1px solid var(--hs-orange-mid);border-radius:6px;font-size:11px;color:var(--hs-orange-dark);line-height:1.6;margin-top:4px">
-        💡 HubSpot is already connected via MCP. Claude API key is optional — enhances AI summaries in reports.
+        💡 Add your HubSpot Private App token above for live data. Dashboard auto-refreshes every 60 seconds when the local server is running (<code>node server.js</code>).
       </div>
     </div>
     <div class="modal-f">
@@ -1142,16 +1146,111 @@ function showToast(msg){
   const el=document.getElementById('toast');document.getElementById('tMsg').textContent=msg;
   el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3000);
 }
-function openConfig(){document.getElementById('cfgClaude').value=CLAUDE_KEY;document.getElementById('cfgInst').value=INST;document.getElementById('configOverlay').classList.add('open')}
+function openConfig(){
+  document.getElementById('cfgHS').value=localStorage.getItem('hs_token')||'';
+  document.getElementById('cfgClaude').value=CLAUDE_KEY;
+  document.getElementById('cfgInst').value=INST;
+  document.getElementById('configOverlay').classList.add('open');
+}
 function closeConfig(){document.getElementById('configOverlay').classList.remove('open')}
-function saveConfig(){CLAUDE_KEY=document.getElementById('cfgClaude').value.trim();INST=document.getElementById('cfgInst').value.trim()||'Inspiria Knowledge Campus';localStorage.setItem('claude_key',CLAUDE_KEY);localStorage.setItem('inst_name',INST);closeConfig();showToast('Configuration saved');}
+async function saveConfig(){
+  CLAUDE_KEY=document.getElementById('cfgClaude').value.trim();
+  INST=document.getElementById('cfgInst').value.trim()||'Inspiria Knowledge Campus';
+  localStorage.setItem('claude_key',CLAUDE_KEY);
+  localStorage.setItem('inst_name',INST);
+  const hsToken=document.getElementById('cfgHS').value.trim();
+  if(hsToken){
+    localStorage.setItem('hs_token',hsToken);
+    try{
+      await fetch('/api/set-token',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:hsToken})});
+    }catch(_){}
+  }
+  closeConfig();
+  showToast('Configuration saved');
+  fetchLiveData(true);
+}
 document.getElementById('configOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('configOverlay'))closeConfig();});
 
+// ── LIVE DATA FETCH ────────────────────────────────────────────────────────────
+let liveRefreshTimer = null;
+
+function setBadge(state){
+  const badge=document.getElementById('liveBadge');
+  const dot=document.getElementById('liveDot');
+  const txt=document.getElementById('liveBadgeText');
+  if(state==='live'){
+    badge.style.cssText='display:flex;align-items:center;gap:5px;padding:3px 10px;background:rgba(0,189,165,.15);border:1px solid rgba(0,189,165,.35);border-radius:100px;font-size:11px;font-weight:500;color:#00BDA5';
+    dot.style.background='#00BDA5'; txt.textContent='Live · HubSpot';
+  } else if(state==='fetching'){
+    badge.style.cssText='display:flex;align-items:center;gap:5px;padding:3px 10px;background:rgba(245,194,0,.12);border:1px solid rgba(245,194,0,.35);border-radius:100px;font-size:11px;font-weight:500;color:#d4a800';
+    dot.style.background='#F5C200'; txt.textContent='Fetching…';
+  } else {
+    badge.style.cssText='display:flex;align-items:center;gap:5px;padding:3px 10px;background:rgba(242,84,91,.1);border:1px solid rgba(242,84,91,.3);border-radius:100px;font-size:11px;font-weight:500;color:#F2545B';
+    dot.style.background='#F2545B'; txt.textContent='Static data';
+  }
+}
+
+function applyLiveData(d){
+  // Merge fetched data into the LIVE object
+  LIVE.contacts = d.contacts;
+  if(d.deals){
+    Object.assign(LIVE.deals, d.deals);
+  }
+  if(d.owners && d.owners.length){
+    // Merge by name — preserve color assignments from static config
+    d.owners.forEach(fetched => {
+      const existing = LIVE.owners.find(o => o.name === fetched.name || o.email === fetched.email);
+      if(existing){ existing.total = fetched.total; existing.touched = fetched.touched; }
+      else LIVE.owners.push({ name:fetched.name, short:fetched.name.split(' ')[0], total:fetched.total, touched:fetched.touched, color:'#99ACC2' });
+    });
+  }
+  if(d.reEngagement) Object.assign(LIVE.reEngagement, d.reEngagement);
+}
+
+async function fetchLiveData(force=false){
+  setBadge('fetching');
+  try{
+    const endpoint = force ? '/api/refresh' : '/api/live-data';
+    const res = await fetch(endpoint, {signal: AbortSignal.timeout(15000)});
+    if(!res.ok) throw new Error(`Server ${res.status}`);
+    const json = await res.json();
+    if(!json.success) throw new Error(json.error || 'Unknown error');
+    applyLiveData(json.data);
+    renderDashboard();
+    setBadge('live');
+    showToast(force ? '✓ Data refreshed from HubSpot' : '✓ Live data updated');
+  } catch(err){
+    console.warn('Live fetch failed:', err.message);
+    setBadge('static');
+    // Fall back to static data silently on first load
+    renderDashboard();
+  }
+}
+
+function startAutoRefresh(){
+  if(liveRefreshTimer) clearInterval(liveRefreshTimer);
+  liveRefreshTimer = setInterval(() => fetchLiveData(false), 60_000);
+}
+
+// Override refreshDashboard to also force-fetch from server
+function refreshDashboard(){
+  showToast('Refreshing from HubSpot…');
+  fetchLiveData(true);
+}
+
 // ── INIT ───────────────────────────────────────────────────────────────────────
-window.addEventListener('load',()=>{
-  if(localStorage.getItem('claude_key'))CLAUDE_KEY=localStorage.getItem('claude_key');
-  if(localStorage.getItem('inst_name'))INST=localStorage.getItem('inst_name');
-  renderDashboard();
+window.addEventListener('load', async () => {
+  if(localStorage.getItem('claude_key')) CLAUDE_KEY = localStorage.getItem('claude_key');
+  if(localStorage.getItem('inst_name'))  INST       = localStorage.getItem('inst_name');
+
+  // Push stored token to server (server may have restarted)
+  const storedToken = localStorage.getItem('hs_token');
+  if(storedToken){
+    try{ await fetch('/api/set-token',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:storedToken})}); }catch(_){}
+  }
+
+  await fetchLiveData(false); // initial load
+  startAutoRefresh();         // refresh every 60 s
 });
 </script>
 </body>
