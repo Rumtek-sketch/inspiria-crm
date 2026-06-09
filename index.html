@@ -518,8 +518,8 @@ footer{
 </footer>
 
 <script>
-// ── LIVE DATA (single source of truth, mirrors dashboard.html) ──
-const LIVE = {
+// ── FALLBACK DATA (used when server is unreachable) ────────────────────────────
+const FALLBACK = {
   contacts: 21534,
   deals: {appointmentScheduled:641, formSold:47, admissionDone:360, closedWon:1, closedLost:1702},
   owners: [
@@ -529,8 +529,6 @@ const LIVE = {
   ],
   reEngagement:{dormant:962}
 };
-const TOTAL_DEALS   = Object.values(LIVE.deals).reduce((s,v)=>s+v,0);
-const TOTAL_TOUCHED = LIVE.owners.reduce((s,o)=>s+o.touched,0);
 
 function fmt(n){ return n.toLocaleString('en-IN'); }
 
@@ -551,31 +549,48 @@ function formatMonthYear(d){
   return d.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
 }
 
-window.addEventListener('load', () => {
+function renderStats(d){
+  const totalDeals   = Object.values(d.deals).reduce((s,v)=>s+v,0);
+  const totalTouched = (d.owners||[]).reduce((s,o)=>s+o.touched,0);
+
+  animateVal('hContacts',   d.contacts);
+  animateVal('hDeals',      totalDeals);
+  animateVal('hAdmissions', d.deals.admissionDone);
+  animateVal('hTouched',    totalTouched);
+  animateVal('hOwners',     (d.owners||[]).length || FALLBACK.owners.length);
+
+  animateVal('sContacts',   d.contacts);
+  animateVal('sAdmissions', d.deals.admissionDone);
+  animateVal('sAppts',      d.deals.appointmentScheduled);
+  animateVal('sTouched',    totalTouched);
+  animateVal('sLost',       d.deals.closedLost);
+  animateVal('sDormant',    (d.reEngagement||{}).dormant || FALLBACK.reEngagement.dormant);
+}
+
+window.addEventListener('load', async () => {
   const now = new Date();
 
-  // Badge & snapshot label
+  // Dates
   document.getElementById('heroBadgeDate').textContent = formatMonthYear(now);
   document.getElementById('snapLabel').textContent = 'Live Data · ' + formatDate(now);
-
-  // Footer year
   const fyEl = document.getElementById('footerYear');
   if(fyEl) fyEl.textContent = now.getFullYear();
 
-  // Hero stats (animated counters)
-  animateVal('hContacts',   LIVE.contacts);
-  animateVal('hDeals',      TOTAL_DEALS);
-  animateVal('hAdmissions', LIVE.deals.admissionDone);
-  animateVal('hTouched',    TOTAL_TOUCHED);
-  animateVal('hOwners',     LIVE.owners.length);
+  // Render fallback immediately so page isn't blank
+  renderStats(FALLBACK);
 
-  // Snapshot stats (animated counters)
-  animateVal('sContacts',   LIVE.contacts);
-  animateVal('sAdmissions', LIVE.deals.admissionDone);
-  animateVal('sAppts',      LIVE.deals.appointmentScheduled);
-  animateVal('sTouched',    TOTAL_TOUCHED);
-  animateVal('sLost',       LIVE.deals.closedLost);
-  animateVal('sDormant',    LIVE.reEngagement.dormant);
+  // Then fetch live data from server and re-render
+  try {
+    const res  = await fetch('/api/live-data', { signal: AbortSignal.timeout(10000) });
+    const json = await res.json();
+    if(json.success && json.data) {
+      renderStats(json.data);
+      document.getElementById('snapLabel').textContent =
+        'Live Data · ' + formatDate(now) + ' · HubSpot';
+    }
+  } catch(_) {
+    // Server not running — fallback data already shown, nothing to do
+  }
 });
 
 // Scroll reveal
