@@ -454,6 +454,17 @@ tbody tr:last-child td{border-bottom:none}
       </button>
     </div>
 
+    <div class="sb-section">
+      <div class="sb-title">Contact Enquiries</div>
+      <button class="quick-btn" onclick="downloadEnquiries()">
+        <span class="qi">📥</span>
+        <div>
+          <span class="qt">Download Enquiries</span>
+          <span class="qd" id="enquiryCount">Loading…</span>
+        </div>
+      </button>
+    </div>
+
     <div class="sb-history">
       <div class="sb-title">Report History</div>
       <div id="historyList"></div>
@@ -1238,6 +1249,23 @@ function refreshDashboard(){
   fetchLiveData(true);
 }
 
+// ── CONTACT ENQUIRIES ──────────────────────────────────────────────────────────
+function downloadEnquiries(){
+  const a = document.createElement('a');
+  a.href = '/api/contacts/export';
+  a.download = 'Inspiria_Contact_Enquiries.xlsx';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  showToast('Downloading enquiries Excel…');
+}
+async function loadEnquiryCount(){
+  try{
+    const res  = await fetch('/api/contacts/count');
+    const json = await res.json();
+    const el   = document.getElementById('enquiryCount');
+    if(el) el.textContent = json.count + ' enquir' + (json.count===1?'y':'ies') + ' received';
+  }catch(_){}
+}
+
 // ── INIT ───────────────────────────────────────────────────────────────────────
 window.addEventListener('load', async () => {
   if(localStorage.getItem('claude_key')) CLAUDE_KEY = localStorage.getItem('claude_key');
@@ -1251,6 +1279,7 @@ window.addEventListener('load', async () => {
 
   await fetchLiveData(false); // initial load
   startAutoRefresh();         // refresh every 60 s
+  loadEnquiryCount();         // show contact enquiry count in sidebar
 });
 </script>
 </body>

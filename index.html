@@ -220,6 +220,45 @@ footer{
 /* scroll reveal */
 .reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
 .reveal.visible{opacity:1;transform:translateY(0)}
+
+/* CONTACT FORM */
+.contact-section{background:#fff;padding:72px 24px;border-top:1px solid var(--gray-100)}
+.contact-inner{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1fr 1.4fr;gap:64px;align-items:start}
+@media(max-width:768px){.contact-inner{grid-template-columns:1fr;gap:36px}}
+.contact-info h2{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;color:var(--navy);margin-bottom:12px}
+.contact-info p{font-size:14px;color:var(--gray-600);line-height:1.75;margin-bottom:28px}
+.contact-detail{display:flex;align-items:flex-start;gap:12px;margin-bottom:18px}
+.contact-detail-icon{width:38px;height:38px;border-radius:9px;background:var(--gray-50);border:1px solid var(--gray-200);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.contact-detail-text strong{display:block;font-size:12px;font-weight:600;color:var(--navy);margin-bottom:2px}
+.contact-detail-text span{font-size:12px;color:var(--gray-600)}
+.form-card{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:16px;padding:32px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:540px){.form-row{grid-template-columns:1fr}}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:11px;font-weight:600;color:var(--gray-700);margin-bottom:5px;letter-spacing:.3px;text-transform:uppercase}
+.form-group input,
+.form-group select,
+.form-group textarea{
+  width:100%;padding:9px 12px;border:1px solid var(--gray-200);border-radius:8px;
+  background:#fff;font-family:'Lexend',sans-serif;font-size:13px;color:var(--gray-800);
+  outline:none;transition:border .15s,box-shadow .15s;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(27,58,140,.08)}
+.form-group textarea{resize:vertical;min-height:90px;line-height:1.6}
+.form-group select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2399ACC2' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+.form-submit{
+  width:100%;padding:12px 24px;border:none;border-radius:9px;
+  background:var(--navy);color:#fff;font-family:'Lexend',sans-serif;
+  font-size:14px;font-weight:600;cursor:pointer;transition:all .18s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.form-submit:hover{background:var(--navy-light);transform:translateY(-1px);box-shadow:0 6px 20px rgba(27,58,140,.25)}
+.form-submit:disabled{opacity:.6;cursor:not-allowed;transform:none;box-shadow:none}
+.form-msg{margin-top:12px;padding:10px 14px;border-radius:8px;font-size:12px;font-weight:500;display:none}
+.form-msg.success{background:#E5F8F6;color:#008F82;border:1px solid rgba(0,189,165,.25);display:block}
+.form-msg.error{background:#FDEDEE;color:#c0222a;border:1px solid rgba(242,84,91,.25);display:block}
 </style>
 </head>
 <body>
@@ -243,6 +282,7 @@ footer{
   <div class="nav-right">
     <a href="#features" class="nav-pill outline">Features</a>
     <a href="#data" class="nav-pill outline">Live Data</a>
+    <a href="#contact" class="nav-pill outline">Contact</a>
     <a href="dashboard.html" class="nav-pill solid">Open CRM</a>
   </div>
 </nav>
@@ -486,6 +526,107 @@ footer{
   </div>
 </section>
 
+<!-- CONTACT FORM -->
+<section class="contact-section" id="contact">
+  <div class="contact-inner">
+
+    <!-- Left: info -->
+    <div class="reveal">
+      <div class="section-label">Get in Touch</div>
+      <h2 class="contact-info" style="font-size:clamp(1.5rem,3vw,2rem);font-weight:700;color:var(--navy);margin-bottom:12px">We&rsquo;d love to hear from you</h2>
+      <p style="font-size:14px;color:var(--gray-600);line-height:1.75;margin-bottom:28px">Interested in admission at Inspiria Knowledge Campus? Fill in the form and our counselors will reach out within 24 hours.</p>
+
+      <div class="contact-detail">
+        <div class="contact-detail-icon">&#x1F3EB;</div>
+        <div class="contact-detail-text">
+          <strong>Inspiria Knowledge Campus</strong>
+          <span>Newtown, Kolkata, West Bengal</span>
+        </div>
+      </div>
+      <div class="contact-detail">
+        <div class="contact-detail-icon">&#x2709;&#xFE0F;</div>
+        <div class="contact-detail-text">
+          <strong>Email us</strong>
+          <span>SYSTEMS@inspiria.edu.in</span>
+        </div>
+      </div>
+      <div class="contact-detail">
+        <div class="contact-detail-icon">&#x1F4C5;</div>
+        <div class="contact-detail-text">
+          <strong>Admission Season</strong>
+          <span>June 2026 &mdash; Seats filling fast</span>
+        </div>
+      </div>
+      <div class="contact-detail">
+        <div class="contact-detail-icon">&#x1F4CA;</div>
+        <div class="contact-detail-text">
+          <strong>All enquiries saved to Excel</strong>
+          <span>Downloadable from the CRM dashboard</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: form -->
+    <div class="form-card reveal">
+      <form id="contactForm" onsubmit="submitContact(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" id="cf_name" placeholder="Your full name" required>
+          </div>
+          <div class="form-group">
+            <label>Phone Number *</label>
+            <input type="tel" id="cf_phone" placeholder="+91 98765 43210" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email Address *</label>
+          <input type="email" id="cf_email" placeholder="you@example.com" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Course Interested In</label>
+            <select id="cf_course">
+              <option value="">— Select a course —</option>
+              <option>B.Tech (CSE)</option>
+              <option>B.Tech (ECE)</option>
+              <option>B.Tech (ME)</option>
+              <option>BCA</option>
+              <option>MCA</option>
+              <option>MBA</option>
+              <option>B.Sc (CS)</option>
+              <option>B.Com</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Lead Source</label>
+            <select id="cf_source">
+              <option value="">— How did you hear? —</option>
+              <option>Inspiria Q</option>
+              <option>Career Fair</option>
+              <option>Seminar</option>
+              <option>Edu Fair</option>
+              <option>Social Media</option>
+              <option>Friend / Referral</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Message / Query</label>
+          <textarea id="cf_message" placeholder="Tell us what you'd like to know…"></textarea>
+        </div>
+        <button type="submit" class="form-submit" id="cfSubmitBtn">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M14.5 1.5l-13 5.5 4.5 2 2 4.5z"/></svg>
+          Send Enquiry
+        </button>
+        <div class="form-msg" id="cfMsg"></div>
+      </form>
+    </div>
+  </div>
+</section>
+
 <!-- CTA BANNER -->
 <section class="cta-section">
   <h2>Ready to explore your data?</h2>
@@ -593,11 +734,56 @@ window.addEventListener('load', async () => {
   }
 });
 
+// ── CONTACT FORM ──────────────────────────────────────────────────────────────
+async function submitContact(e) {
+  e.preventDefault();
+  const btn = document.getElementById('cfSubmitBtn');
+  const msg = document.getElementById('cfMsg');
+  msg.className = 'form-msg';
+  msg.style.display = 'none';
+  btn.disabled = true;
+  btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" style="animation:spin .8s linear infinite"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2a5 5 0 010 10A5 5 0 018 3z" opacity=".3"/><path d="M15 8a7 7 0 01-7 7V13a5 5 0 005-5h2z"/></svg> Sending…';
+
+  const payload = {
+    name:    document.getElementById('cf_name').value.trim(),
+    phone:   document.getElementById('cf_phone').value.trim(),
+    email:   document.getElementById('cf_email').value.trim(),
+    course:  document.getElementById('cf_course').value,
+    source:  document.getElementById('cf_source').value,
+    message: document.getElementById('cf_message').value.trim(),
+  };
+
+  try {
+    const res  = await fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const json = await res.json();
+    if (json.success) {
+      msg.textContent = '✓ Enquiry submitted! Our team will contact you within 24 hours.';
+      msg.className = 'form-msg success';
+      document.getElementById('contactForm').reset();
+    } else {
+      throw new Error(json.error || 'Submission failed');
+    }
+  } catch (err) {
+    msg.textContent = '✗ ' + (err.message || 'Could not submit. Please try again.');
+    msg.className = 'form-msg error';
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M14.5 1.5l-13 5.5 4.5 2 2 4.5z"/></svg> Send Enquiry';
+  }
+}
+
 // Scroll reveal
 const observer = new IntersectionObserver(entries => {
   entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
 }, {threshold: 0.12});
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 </script>
+<style>
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
 </body>
 </html>

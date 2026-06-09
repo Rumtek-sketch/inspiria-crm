@@ -6,7 +6,33 @@
 
 const express = require('express');
 const path    = require('path');
+const fs      = require('fs');
+const XLSX    = require('xlsx');
 const app     = express();
+
+const DB_FILE = path.join(__dirname, 'contacts-database.xlsx');
+const SHEET   = 'Enquiries';
+
+function readDB() {
+  if (!fs.existsSync(DB_FILE)) return [];
+  const wb = XLSX.readFile(DB_FILE);
+  return wb.SheetNames.includes(SHEET)
+    ? XLSX.utils.sheet_to_json(wb.Sheets[SHEET])
+    : [];
+}
+
+function writeDB(rows) {
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.json_to_sheet(rows, {
+    header: ['S.No','Submitted At','Name','Phone','Email','Course','Source','Message'],
+  });
+  // Column widths
+  ws['!cols'] = [
+    {wch:6},{wch:22},{wch:24},{wch:16},{wch:28},{wch:20},{wch:18},{wch:40}
+  ];
+  XLSX.utils.book_append_sheet(wb, ws, SHEET);
+  XLSX.writeFile(wb, DB_FILE);
+}
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
@@ -144,6 +170,43 @@ app.get('/api/refresh', async (req, res) => {
   } catch(err) {
     res.status(500).json({ success:false, error: err.message });
   }
+});
+
+// ── CONTACT FORM ──────────────────────────────────────────────────────────────
+app.post('/api/contact', (req, res) => {
+  const { name, phone, email, course, source, message } = req.body || {};
+  if (!name || !phone || !email) {
+    return res.status(400).json({ success: false, error: 'Name, phone and email are required.' });
+  }
+
+  const rows = readDB();
+  rows.push({
+    'S.No':         rows.length + 1,
+    'Submitted At': new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+    'Name':         name,
+    'Phone':        phone,
+    'Email':        email,
+    'Course':       course || '—',
+    'Source':       source || '—',
+    'Message':      message || '—',
+  });
+  writeDB(rows);
+
+  console.log(`[Contact] New enquiry from ${name} <${email}> (${rows.length} total)`);
+  res.json({ success: true, total: rows.length });
+});
+
+// Download the contacts Excel file
+app.get('/api/contacts/export', (req, res) => {
+  if (!fs.existsSync(DB_FILE)) {
+    return res.status(404).json({ error: 'No contacts yet.' });
+  }
+  res.download(DB_FILE, 'Inspiria_Contact_Enquiries.xlsx');
+});
+
+// Count contacts in DB
+app.get('/api/contacts/count', (req, res) => {
+  res.json({ count: readDB().length });
 });
 
 // Save HubSpot token from UI
