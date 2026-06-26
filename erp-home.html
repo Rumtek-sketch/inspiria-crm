@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JMB Group — Ricel Mill ERP</title>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#1A4731;
+  --green-dark:#0F2D1F;
+  --green-light:#2D6A4A;
+  --green-mid:#245F3E;
+  --emerald:#10B981;
+  --emerald-light:#D1FAE5;
+  --emerald-mid:#A7F3D0;
+  --amber:#F59E0B;
+  --amber-dark:#D97706;
+  --amber-light:#FEF3C7;
+  --amber-mid:#FDE68A;
+  --orange:#F97316;
+  --orange-light:#FFF7ED;
+  --red:#EF4444;
+  --red-light:#FEF2F2;
+  --blue:#3B82F6;
+  --blue-light:#EFF6FF;
+  --purple:#8B5CF6;
+  --purple-light:#F5F3FF;
+  --white:#FFFFFF;
+  --gray-50:#F9FAFB;
+  --gray-100:#F3F4F6;
+  --gray-200:#E5E7EB;
+  --gray-300:#D1D5DB;
+  --gray-400:#9CA3AF;
+  --gray-500:#6B7280;
+  --gray-600:#4B5563;
+  --gray-700:#374151;
+  --gray-800:#1F2937;
+  --gray-900:#111827;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Lexend',sans-serif;background:var(--gray-50);color:var(--gray-800);min-height:100vh;overflow-x:hidden}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  height:60px;display:flex;align-items:center;padding:0 32px;gap:16px;
+  background:rgba(15,45,31,.97);backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.nav-logo{display:flex;align-items:center;gap:11px;text-decoration:none;flex-shrink:0}
+.nav-logo-icon{
+  width:38px;height:38px;background:var(--amber);border-radius:9px;
+  display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;
+}
+.nav-wordmark{display:flex;flex-direction:column;line-height:1.15}
+.nav-wordmark strong{font-size:14px;font-weight:700;color:#fff;letter-spacing:-.2px}
+.nav-wordmark span{font-size:9px;color:rgba(255,255,255,.45);letter-spacing:.9px;text-transform:uppercase}
+.nav-divider{width:1px;height:28px;background:rgba(255,255,255,.1)}
+.nav-links{display:flex;gap:2px}
+.nav-link{
+  padding:6px 14px;border-radius:7px;font-size:12px;font-weight:500;color:rgba(255,255,255,.6);
+  text-decoration:none;cursor:pointer;transition:all .15s;border:none;background:transparent;
+  font-family:'Lexend',sans-serif;
+}
+.nav-link:hover{background:rgba(255,255,255,.08);color:#fff}
+.nav-link.active{background:rgba(16,185,129,.15);color:var(--emerald)}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.nav-badge{
+  display:flex;align-items:center;gap:6px;padding:5px 13px;border-radius:100px;
+  background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);
+  font-size:11px;font-weight:600;color:var(--amber);
+}
+.nav-dot{width:5px;height:5px;background:var(--amber);border-radius:50%;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── HERO ── */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:80px 24px 60px;
+  background:linear-gradient(145deg,#081C0E 0%,#0F2D1F 35%,#1A4731 65%,#0D2518 100%);
+  position:relative;overflow:hidden;text-align:center;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 65% 55% at 50% 40%,rgba(245,158,11,.07) 0%,transparent 65%),
+             radial-gradient(ellipse 45% 70% at 80% 15%,rgba(16,185,129,.05) 0%,transparent 55%);
+}
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size:48px 48px;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:7px;padding:5px 16px;border-radius:100px;
+  background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.28);
+  font-size:11px;font-weight:600;color:var(--amber);letter-spacing:.3px;
+  margin-bottom:32px;position:relative;
+}
+.hero-emblem{
+  width:96px;height:96px;border-radius:20px;
+  background:linear-gradient(135deg,rgba(255,255,255,.12) 0%,rgba(255,255,255,.06) 100%);
+  border:1px solid rgba(255,255,255,.12);
+  display:flex;align-items:center;justify-content:center;font-size:44px;
+  margin:0 auto 30px;position:relative;
+  box-shadow:0 8px 40px rgba(245,158,11,.15);
+}
+.hero h1{
+  font-size:clamp(2rem,4.5vw,3.4rem);font-weight:800;
+  color:#fff;line-height:1.13;letter-spacing:-.4px;
+  margin-bottom:14px;position:relative;
+}
+.hero h1 em{font-style:normal;color:var(--amber)}
+.hero-sub{
+  font-size:clamp(13px,2vw,16px);color:rgba(255,255,255,.6);
+  max-width:620px;margin:0 auto 36px;line-height:1.8;position:relative;font-weight:300;
+}
+.hero-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative;margin-bottom:52px}
+.btn-hero{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:13px 28px;border-radius:10px;font-size:14px;font-weight:600;
+  cursor:pointer;text-decoration:none;transition:all .18s;
+  font-family:'Lexend',sans-serif;border:none;
+}
+.btn-primary{background:var(--amber);color:var(--green-dark)}
+.btn-primary:hover{background:var(--amber-dark);transform:translateY(-2px);box-shadow:0 8px 24px rgba(245,158,11,.35)}
+.btn-secondary{background:rgba(255,255,255,.09);color:#fff;border:1px solid rgba(255,255,255,.18)}
+.btn-secondary:hover{background:rgba(255,255,255,.16);transform:translateY(-2px)}
+.hero-stats{
+  display:flex;gap:40px;justify-content:center;flex-wrap:wrap;position:relative;
+  padding-top:36px;border-top:1px solid rgba(255,255,255,.07);
+}
+.stat-item{text-align:center}
+.stat-val{font-size:30px;font-weight:800;color:#fff;line-height:1}
+.stat-val.amber{color:var(--amber)}
+.stat-val.emerald{color:var(--emerald)}
+.stat-lbl{font-size:10px;color:rgba(255,255,255,.4);margin-top:5px;letter-spacing:.7px;text-transform:uppercase}
+
+/* ── SECTIONS ── */
+.section{padding:72px 24px}
+.section-inner{max-width:1120px;margin:0 auto}
+.section-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:10px;font-weight:700;color:var(--emerald);letter-spacing:1.2px;text-transform:uppercase;
+  margin-bottom:10px;
+}
+.section-h{font-size:clamp(1.4rem,2.8vw,2rem);font-weight:700;color:var(--green);line-height:1.25;margin-bottom:10px}
+.section-p{font-size:14px;color:var(--gray-500);max-width:560px;line-height:1.8}
+
+/* ── MODULE CARDS ── */
+.modules-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-top:44px;
+}
+.mod-card{
+  background:#fff;border:1px solid var(--gray-200);border-radius:14px;
+  padding:22px 24px;transition:all .2s;cursor:pointer;text-decoration:none;display:block;
+  position:relative;overflow:hidden;
+}
+.mod-card::after{
+  content:'';position:absolute;top:0;left:0;bottom:0;width:4px;
+  background:var(--mod-color,var(--green));border-radius:4px 0 0 4px;
+  transition:width .2s;
+}
+.mod-card:hover{box-shadow:0 6px 28px rgba(26,71,49,.1);transform:translateY(-2px)}
+.mod-card:hover::after{width:5px}
+.mod-num{font-size:10px;font-weight:700;color:var(--gray-400);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;font-family:'JetBrains Mono',monospace}
+.mod-title{font-size:15px;font-weight:700;color:var(--green-dark);margin-bottom:6px}
+.mod-desc{font-size:12px;color:var(--gray-500);line-height:1.65;margin-bottom:14px}
+.mod-footer{display:flex;align-items:center;justify-content:space-between}
+.mod-owner{font-size:11px;color:var(--gray-500);display:flex;align-items:center;gap:5px}
+.mod-owner-dot{width:6px;height:6px;border-radius:50%;background:var(--mod-color,var(--green));flex-shrink:0}
+.mod-week{
+  font-size:10px;font-weight:600;padding:3px 9px;border-radius:5px;
+  background:var(--mod-bg,var(--emerald-light));color:var(--mod-color,var(--emerald));
+  font-family:'JetBrains Mono',monospace;
+}
+
+/* ── PHASE TIMELINE ── */
+.phases-section{background:#fff;border-top:1px solid var(--gray-100);padding:72px 24px}
+.timeline{margin-top:48px;position:relative}
+.timeline::before{
+  content:'';position:absolute;left:28px;top:0;bottom:0;width:2px;
+  background:linear-gradient(180deg,var(--emerald) 0%,var(--amber) 60%,var(--gray-200) 100%);
+}
+.phase-row{
+  display:flex;gap:24px;margin-bottom:28px;position:relative;
+  align-items:flex-start;
+}
+.phase-node{
+  width:58px;height:58px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:20px;
+  border:3px solid #fff;box-shadow:0 0 0 2px var(--node-color,var(--green));
+  background:var(--node-color,var(--green));position:relative;z-index:1;
+}
+.phase-body{
+  flex:1;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:12px;
+  padding:16px 20px;transition:box-shadow .15s;
+}
+.phase-body:hover{box-shadow:0 4px 16px rgba(26,71,49,.08)}
+.phase-top{display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap}
+.phase-num{font-size:10px;font-weight:700;color:var(--gray-400);font-family:'JetBrains Mono',monospace;letter-spacing:1px}
+.phase-name{font-size:15px;font-weight:700;color:var(--green-dark)}
+.phase-week{
+  margin-left:auto;font-size:10px;font-weight:600;padding:3px 10px;border-radius:5px;
+  background:var(--phase-bg,var(--emerald-light));color:var(--phase-col,var(--emerald));
+  font-family:'JetBrains Mono',monospace;white-space:nowrap;
+}
+.phase-meta{font-size:12px;color:var(--gray-500);margin-bottom:8px}
+.phase-owner-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
+.phase-owner{font-size:11px;color:var(--gray-500)}
+.phase-deliverable{font-size:11px;font-weight:600;color:var(--green-mid);background:var(--emerald-light);padding:2px 8px;border-radius:4px}
+
+/* ── KPI SECTION ── */
+.kpi-section{background:var(--green-dark);padding:72px 24px}
+.kpi-section .section-h{color:#fff}
+.kpi-section .section-p{color:rgba(255,255,255,.5)}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:44px}
+.kpi-card{
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;
+  padding:20px;transition:all .15s;
+}
+.kpi-card:hover{background:rgba(255,255,255,.1);border-color:rgba(245,158,11,.35);transform:translateY(-2px)}
+.kpi-metric{font-size:13px;font-weight:600;color:rgba(255,255,255,.7);margin-bottom:10px;line-height:1.4}
+.kpi-target{font-size:22px;font-weight:800;color:var(--amber);line-height:1;margin-bottom:4px}
+.kpi-label{font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.7px}
+.kpi-icon{font-size:22px;margin-bottom:10px}
+
+/* ── INTEGRATION ── */
+.integration-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:40px}
+.int-card{
+  background:#fff;border:1px solid var(--gray-200);border-radius:10px;
+  padding:16px 18px;display:flex;align-items:center;gap:12px;
+  transition:box-shadow .15s;
+}
+.int-card:hover{box-shadow:0 4px 16px rgba(26,71,49,.08)}
+.int-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.int-name{font-size:13px;font-weight:600;color:var(--green-dark);margin-bottom:2px}
+.int-type{font-size:10px;color:var(--gray-400)}
+.int-priority{
+  margin-left:auto;font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;
+  flex-shrink:0;
+}
+.priority-critical{background:#FEE2E2;color:#DC2626}
+.priority-high{background:var(--amber-light);color:#92400E}
+.priority-medium{background:var(--blue-light);color:#1E40AF}
+.priority-low{background:var(--gray-100);color:var(--gray-600)}
+
+/* ── GOVERNANCE ── */
+.governance-section{background:var(--gray-50);border-top:1px solid var(--gray-100);padding:72px 24px}
+.gov-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:44px}
+@media(max-width:768px){.gov-grid{grid-template-columns:1fr}}
+.gov-card{background:#fff;border:1px solid var(--gray-200);border-radius:14px;padding:24px;overflow:hidden}
+.gov-card-title{font-size:14px;font-weight:700;color:var(--green-dark);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.gov-table{width:100%;border-collapse:collapse}
+.gov-table th{font-size:10px;font-weight:700;color:var(--gray-400);letter-spacing:.8px;text-transform:uppercase;padding:6px 10px;text-align:left;background:var(--gray-50);border-bottom:1px solid var(--gray-200)}
+.gov-table td{font-size:12px;color:var(--gray-600);padding:8px 10px;border-bottom:1px solid var(--gray-100)}
+.gov-table tr:last-child td{border-bottom:none}
+.gov-table td:first-child{font-weight:600;color:var(--green-dark)}
+
+/* ── CHECKLIST ── */
+.checklist-section{background:#fff;border-top:1px solid var(--gray-100);padding:72px 24px}
+.checklist-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-top:40px}
+.check-item{
+  display:flex;align-items:flex-start;gap:12px;padding:14px 16px;
+  background:var(--gray-50);border:1px solid var(--gray-200);border-radius:10px;
+  transition:box-shadow .15s;
+}
+.check-item:hover{box-shadow:0 2px 10px rgba(26,71,49,.07)}
+.check-box{
+  width:22px;height:22px;border-radius:5px;border:2px solid var(--gray-300);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;
+}
+.check-num{font-size:10px;font-weight:700;color:var(--gray-400);font-family:'JetBrains Mono',monospace}
+.check-body{flex:1}
+.check-label{font-size:13px;font-weight:600;color:var(--green-dark);margin-bottom:3px}
+.check-owner{font-size:11px;color:var(--gray-400)}
+
+/* ── CTA ── */
+.cta-section{
+  padding:80px 24px;
+  background:linear-gradient(135deg,var(--green) 0%,var(--green-light) 50%,var(--green) 100%);
+  text-align:center;
+}
+.cta-section h2{font-size:clamp(1.5rem,3vw,2.2rem);font-weight:800;color:#fff;margin-bottom:12px}
+.cta-section p{font-size:15px;color:rgba(255,255,255,.55);max-width:500px;margin:0 auto 32px;line-height:1.75}
+
+/* ── FOOTER ── */
+footer{
+  background:var(--green-dark);padding:28px 32px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+}
+.footer-left{display:flex;align-items:center;gap:10px}
+.footer-logo{width:32px;height:32px;background:var(--amber);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.footer-name{font-size:13px;font-weight:600;color:rgba(255,255,255,.55)}
+.footer-name strong{color:#fff}
+.footer-links{display:flex;gap:20px}
+.footer-links a{font-size:12px;color:rgba(255,255,255,.35);text-decoration:none;transition:color .12s}
+.footer-links a:hover{color:rgba(255,255,255,.7)}
+.footer-copy{font-size:11px;color:rgba(255,255,255,.2)}
+
+/* ── REVEAL ── */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .55s ease,transform .55s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  nav{padding:0 16px}
+  .nav-links{display:none}
+  .section{padding:52px 16px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-icon">🌾</div>
+    <div class="nav-wordmark">
+      <strong>JMB Group</strong>
+      <span>Ricel Mill Division</span>
+    </div>
+  </a>
+  <div class="nav-divider"></div>
+  <div class="nav-links">
+    <a href="#modules" class="nav-link active">Modules</a>
+    <a href="#phases" class="nav-link">Roadmap</a>
+    <a href="#kpis" class="nav-link">KPIs</a>
+    <a href="#governance" class="nav-link">Governance</a>
+    <a href="#checklist" class="nav-link">Go-Live</a>
+  </div>
+  <div class="nav-right">
+    <div class="nav-badge">
+      <div class="nav-dot"></div>
+      <span id="navDate">Implementation Active</span>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+
+  <div class="hero-badge">
+    <div class="nav-dot"></div>
+    ERP Implementation Plan v1.0 &nbsp;·&nbsp; Internal Confidential
+  </div>
+
+  <div class="hero-emblem">🏭</div>
+
+  <h1>
+    JMB Group <em>Ricel Mill</em><br>ERP Implementation
+  </h1>
+
+  <p class="hero-sub">
+    End-to-end digital transformation of paddy procurement, milling, inventory, sales, finance, HR,
+    and compliance — unified into a single integrated ERP platform.
+  </p>
+
+  <div class="hero-cta">
+    <a href="#modules" class="btn-hero btn-primary">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M1 2h6v6H1zm8 0h6v6H9zM1 10h6v6H1zm8 0h6v6H9z"/></svg>
+      View All Modules
+    </a>
+    <a href="#phases" class="btn-hero btn-secondary">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l2 5h5l-4 3 2 5-5-3-5 3 2-5L1 6h5z"/></svg>
+      Implementation Roadmap
+    </a>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-val">10</div>
+      <div class="stat-lbl">Core Modules</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-val amber">12</div>
+      <div class="stat-lbl">Week Timeline</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-val emerald">7</div>
+      <div class="stat-lbl">Phases</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-val">8</div>
+      <div class="stat-lbl">Integrations</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-val">10</div>
+      <div class="stat-lbl">KPI Targets</div>
+    </div>
+  </div>
+</section>
+
+<!-- MODULES -->
+<section class="section" id="modules">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-tag">Core ERP Modules</div>
+      <h2 class="section-h">10 Functional Modules</h2>
+      <p class="section-p">From paddy gate to MIS dashboard — every operational area covered and integrated into a single unified system.</p>
+    </div>
+
+    <div class="modules-grid">
+
+      <a href="erp-module-01.html" class="mod-card reveal" style="--mod-color:#10B981;--mod-bg:#D1FAE5;text-decoration:none">
+        <div class="mod-num">Module 01</div>
+        <div class="mod-title">Procurement & Paddy Purchasing</div>
+        <div class="mod-desc">PO management, farmer/vendor master, moisture & weight capture, grading, GRN, advance payment tracking, and purchase return management.</div>
+        <div class="mod-footer">
+          <div class="mod-owner"><div class="mod-owner-dot"></div>Purchase Manager</div>
+          <div class="mod-week">Week 1–3</div>
+        </div>
+      </a>
+
+      <div class="mod-card reveal" style="--mod-color:#F59E0B;--mod-bg:#FEF3C7">
+        <div class="mod-num">Module 02</div>
+        <div class="mod-title">Milling & Production</div>
+        <div class="mod-desc">Milling order management, paddy batch allocation, stage tracking (Pre-cleaning → Husking → Whitening → Grading → Polish), yield calculation, and finished goods posting.</div>
+        <div class="mod-footer">
+          <div class="mod-owner"><div class="mod-owner-dot"></div>Mill Operations Head</div>
+          <div class="mod-week">Week 2–4</div>
+        </div>
+      </div>
+
+      <div class="mod-card reveal" style="--mod-color:#3B82F6;--mod-bg:#EFF6FF">
+        <div class="mod-num">Module 03</div>
+        <div class="mod-title">Inventory & Warehouse</div>
+        <div class="mod-desc">Multi-warehouse management for paddy, finished rice, byproducts, and packing materials. FIFO/LIFO valuation, reorder alerts, and physical stock verification.</div>
+        <div class="mod-footer">
+          <div class="mod-owner"><div class="mod-owner-dot"></div>Warehouse Manager</div>
+          <div class="mod-week">Week 3–5</div>
+        </div>
+      </div>
+
+      <div class="mod-card reveal" style="--mod-color:#F97316;--mod-bg:#FFF7ED">
+        <div class="mod-num">Module 04</div>
+        <div class="mod-title">Sales & Distribution</div>
+        <div class="mod-desc">Customer master, quotation/rate card, SO management, dispatch & delivery order, GST-compliant invoice, e-Invoice/e-Way Bill integration, and debtor aging.</div>
+        <div class="mod-footer">
+          <div class="mod-owner"><div class="mod-owner-dot"></div>Sales Manager</div>
+          <div class="mod-week">Week 4–6</div>
+        </div>
+      </div>
+
+      <div class="mod-card reveal" style="--mod-color:#8B5CF6;--mod-bg:#F5F3FF">
+        <div class="mod-num">Module 05</div>
+        <div class="mod-title">Accounts & Finance</div>
+        <div class="mod-desc">Full AP/AR/GL accounting, bank reconciliation, cost centre allocation, GST (GSTR-1, GSTR-3B), TDS management, fixed assets, and daily P&L reporting.</div>
+        <div class="mod-footer">
+          <div class="mod-owner"><div class="mod-owner-dot"></div>Finance Manager</div>
+          <div class="mod-week">Week 5–7</div>
+        </div>
+      </div>
+
+      <div class="mod-card reveal" style="--mod-color:#EC4899;--mod-bg:#FDF2F8">
+        <div class="mod-num">Module 06</div>
+        <div class="mod-title">HR & Payroll</div>
+        <div class="mod-desc">Employee master (permanent/contract/daily wage), biometric attendance, payroll with PF/ESI/PT, labour contract management, leave management, and Factories Act compliance.</div>
+        <div class="mod-footer">
+          <div class="mod-owner"><div class="mod-owner-dot"></div>HR Manager</div>
+          <div class="mod-week">Week 6–8</div>
+        </div>
+      </div>
+
+      <div class="mod-card reveal" style="--mod-color:#14B8A6;--mod-bg:#F0FDFA">
+        <div class="mod-num">Module 07</div>
+        <div class="mod-title">Quality Control</div>
+        <div class="mod-desc">Paddy intake QC (moisture, foreign matter, broken grain %), in-process stage QC, finished product certification, lab records, COA generation, and QC dashboards.</div>
+        <div class="mod-footer">
+          <div class="mod-owner"><div class="mod-owner-dot"></div>QC In-charge</div>
+          <div class="mod-week">Week 4–6</div>
+        </div>
+      </div>
+
+      <div class="mod-card reveal" style="--mod-color:#EF4444;--mod-bg:#FEF2F2">
+        <div class="mod-num">Module 08</div>
+        <div class="mod-title">Logistics & Transport</div>
+        <div class="mod-desc">Fleet register, trip planning, freight cost management, weighbridge integration, gate pass control, transporter billing, and vehicle turnaround reporting.</div>
+        <div class="mod-footer">
+          <div class="mod-owner"><div class="mod-owner-dot"></div>Logistics Head</div>
+          <div class="mod-week">Week 5–7</div>
+        </div>
+      </div>
+
+      <div class="mod-card reveal" style="--mod-color:#6366F1;--mod-bg:#EEF2FF">
+        <div class="mod-num">Module 09</div>
+        <div class="mod-title">MIS & Reporting Dashboard</div>
+        <div class="mod-desc">CEO/MD daily snapshot, production/procurement/sales/finance dashboards, per-ton cost analysis, byproduct revenue tracker, and WhatsApp/email alert automation.</div>
+        <div class="mod-footer">
+          <div class="mod-owner"><div class="mod-owner-dot"></div>Operations Director</div>
+          <div class="mod-week">Week 7–9</div>
+        </div>
+      </div>
+
+      <div class="mod-card reveal" style="--mod-color:#0EA5E9;--mod-bg:#F0F9FF">
+        <div class="mod-num">Module 10</div>
+        <div class="mod-title">Compliance & Documentation</div>
+        <div class="mod-desc">Statutory registers (Factories Act, Contract Labour Act), GST returns preparation, TDS challan/certificates, Mandi/APMC compliance, and annual audit trail archival.</div>
+        <div class="mod-footer">
+          <div class="mod-owner"><div class="mod-owner-dot"></div>Admin/Compliance Head</div>
+          <div class="mod-week">Week 8–10</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PHASES -->
+<section class="phases-section" id="phases">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-tag">Phased Rollout</div>
+      <h2 class="section-h">12-Week Implementation Roadmap</h2>
+      <p class="section-p">Seven structured phases — each requiring formal sign-off before the next begins. Parallel run mandatory for Finance and Inventory modules.</p>
+    </div>
+
+    <div class="timeline">
+
+      <div class="phase-row reveal">
+        <div class="phase-node" style="--node-color:#10B981;font-size:22px">🔍</div>
+        <div class="phase-body">
+          <div class="phase-top">
+            <span class="phase-num">PHASE 1</span>
+            <span class="phase-name">Discovery & Gap Analysis</span>
+            <span class="phase-week" style="--phase-bg:#D1FAE5;--phase-col:#059669">Week 1–2</span>
+          </div>
+          <div class="phase-meta">ERP Consultant + Department Heads</div>
+          <div class="phase-owner-row">
+            <span class="phase-owner">Conduct current-state process mapping and gap identification</span>
+            <span class="phase-deliverable">Scope document sign-off</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-row reveal">
+        <div class="phase-node" style="--node-color:#3B82F6;font-size:22px">⚙️</div>
+        <div class="phase-body">
+          <div class="phase-top">
+            <span class="phase-num">PHASE 2</span>
+            <span class="phase-name">System Design & Configuration</span>
+            <span class="phase-week" style="--phase-bg:#EFF6FF;--phase-col:#2563EB">Week 3–4</span>
+          </div>
+          <div class="phase-meta">ERP Team + IT</div>
+          <div class="phase-owner-row">
+            <span class="phase-owner">System architecture, module configuration, UAT environment setup</span>
+            <span class="phase-deliverable">UAT environment ready</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-row reveal">
+        <div class="phase-node" style="--node-color:#F59E0B;font-size:22px">📦</div>
+        <div class="phase-body">
+          <div class="phase-top">
+            <span class="phase-num">PHASE 3</span>
+            <span class="phase-name">Data Migration</span>
+            <span class="phase-week" style="--phase-bg:#FEF3C7;--phase-col:#D97706">Week 4–5</span>
+          </div>
+          <div class="phase-meta">Finance + Warehouse + HR</div>
+          <div class="phase-owner-row">
+            <span class="phase-owner">Vendor/farmer master, customer, item, employee, asset & opening balances</span>
+            <span class="phase-deliverable">Clean master data loaded</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-row reveal">
+        <div class="phase-node" style="--node-color:#8B5CF6;font-size:22px">🧪</div>
+        <div class="phase-body">
+          <div class="phase-top">
+            <span class="phase-num">PHASE 4</span>
+            <span class="phase-name">User Acceptance Testing (UAT)</span>
+            <span class="phase-week" style="--phase-bg:#F5F3FF;--phase-col:#7C3AED">Week 5–7</span>
+          </div>
+          <div class="phase-meta">All Module Owners</div>
+          <div class="phase-owner-row">
+            <span class="phase-owner">Module-wise UAT sign-off · UAT failures resolved within 48 hours</span>
+            <span class="phase-deliverable">UAT sign-off per module</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-row reveal">
+        <div class="phase-node" style="--node-color:#EC4899;font-size:22px">🎓</div>
+        <div class="phase-body">
+          <div class="phase-top">
+            <span class="phase-num">PHASE 5</span>
+            <span class="phase-name">Training & Change Management</span>
+            <span class="phase-week" style="--phase-bg:#FDF2F8;--phase-col:#DB2777">Week 7–8</span>
+          </div>
+          <div class="phase-meta">HR + ERP Consultant</div>
+          <div class="phase-owner-row">
+            <span class="phase-owner">Role-specific hands-on lab training for all user groups</span>
+            <span class="phase-deliverable">Training completion >90%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-row reveal">
+        <div class="phase-node" style="--node-color:#EF4444;font-size:22px">🚀</div>
+        <div class="phase-body">
+          <div class="phase-top">
+            <span class="phase-num">PHASE 6</span>
+            <span class="phase-name">Go-Live & Hypercare</span>
+            <span class="phase-week" style="--phase-bg:#FEF2F2;--phase-col:#DC2626">Week 9–10</span>
+          </div>
+          <div class="phase-meta">All Teams + ERP Support</div>
+          <div class="phase-owner-row">
+            <span class="phase-owner">2-week parallel run for Finance & Inventory · Floor support by consultant</span>
+            <span class="phase-deliverable">Live transactions stable</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-row reveal">
+        <div class="phase-node" style="--node-color:#1A4731;font-size:22px">📊</div>
+        <div class="phase-body">
+          <div class="phase-top">
+            <span class="phase-num">PHASE 7</span>
+            <span class="phase-name">Post Go-Live Review</span>
+            <span class="phase-week" style="--phase-bg:#D1FAE5;--phase-col:#065F46">Week 11–12</span>
+          </div>
+          <div class="phase-meta">Operations Director + Finance</div>
+          <div class="phase-owner-row">
+            <span class="phase-owner">KPI review, performance benchmarking, stability confirmation</span>
+            <span class="phase-deliverable">Performance dashboard live</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- KPIs -->
+<section class="kpi-section" id="kpis">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-tag" style="color:var(--amber)">Performance Targets</div>
+      <h2 class="section-h">ERP KPI Benchmarks</h2>
+      <p class="section-p">Measurable targets that define ERP implementation success — tracked from Day 1 of go-live.</p>
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi-card reveal">
+        <div class="kpi-icon">🌾</div>
+        <div class="kpi-metric">Paddy Procurement Turnaround</div>
+        <div class="kpi-target">< 2 hrs</div>
+        <div class="kpi-label">Gate to GRN</div>
+      </div>
+      <div class="kpi-card reveal">
+        <div class="kpi-icon">⚙️</div>
+        <div class="kpi-metric">Milling Yield Accuracy</div>
+        <div class="kpi-target">< 0.5%</div>
+        <div class="kpi-label">Variance vs Standard</div>
+      </div>
+      <div class="kpi-card reveal">
+        <div class="kpi-icon">📦</div>
+        <div class="kpi-metric">Inventory Accuracy</div>
+        <div class="kpi-target">> 98%</div>
+        <div class="kpi-label">Physical Verification Match</div>
+      </div>
+      <div class="kpi-card reveal">
+        <div class="kpi-icon">🧾</div>
+        <div class="kpi-metric">Invoice Generation Time</div>
+        <div class="kpi-target">< 30 min</div>
+        <div class="kpi-label">From Dispatch</div>
+      </div>
+      <div class="kpi-card reveal">
+        <div class="kpi-icon">💰</div>
+        <div class="kpi-metric">Collection Turnaround</div>
+        <div class="kpi-target">< 15 days</div>
+        <div class="kpi-label">Debtor Aging Average</div>
+      </div>
+      <div class="kpi-card reveal">
+        <div class="kpi-icon">🏛️</div>
+        <div class="kpi-metric">GST Filing Readiness</div>
+        <div class="kpi-target">5th</div>
+        <div class="kpi-label">Auto-data Ready Each Month</div>
+      </div>
+      <div class="kpi-card reveal">
+        <div class="kpi-icon">👥</div>
+        <div class="kpi-metric">Payroll Processing Time</div>
+        <div class="kpi-target">< 2 days</div>
+        <div class="kpi-label">End-to-End</div>
+      </div>
+      <div class="kpi-card reveal">
+        <div class="kpi-icon">🖥️</div>
+        <div class="kpi-metric">System Uptime</div>
+        <div class="kpi-target">> 99.5%</div>
+        <div class="kpi-label">During Working Hours</div>
+      </div>
+      <div class="kpi-card reveal">
+        <div class="kpi-icon">📈</div>
+        <div class="kpi-metric">Report Generation Time</div>
+        <div class="kpi-target">< 60 sec</div>
+        <div class="kpi-label">Any Standard Report</div>
+      </div>
+      <div class="kpi-card reveal">
+        <div class="kpi-icon">✅</div>
+        <div class="kpi-metric">User Adoption Rate</div>
+        <div class="kpi-target">> 90%</div>
+        <div class="kpi-label">Within 30 Days of Go-Live</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INTEGRATIONS -->
+<section class="section" style="background:#fff;border-top:1px solid var(--gray-100)">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-tag">System Integrations</div>
+      <h2 class="section-h">8 External Integration Points</h2>
+      <p class="section-p">Critical hardware, government, and third-party API connections that complete the ERP ecosystem.</p>
+    </div>
+    <div class="integration-grid">
+      <div class="int-card reveal">
+        <div class="int-icon" style="background:#D1FAE5">⚖️</div>
+        <div><div class="int-name">Weighbridge</div><div class="int-type">Hardware API · Procurement, Logistics</div></div>
+        <div class="int-priority priority-critical">Critical</div>
+      </div>
+      <div class="int-card reveal">
+        <div class="int-icon" style="background:#EFF6FF">🖐️</div>
+        <div><div class="int-name">Biometric Attendance</div><div class="int-type">Hardware API · HR & Payroll</div></div>
+        <div class="int-priority priority-critical">Critical</div>
+      </div>
+      <div class="int-card reveal">
+        <div class="int-icon" style="background:#FEF3C7">🏛️</div>
+        <div><div class="int-name">GST e-Invoice Portal</div><div class="int-type">Government API · Sales, Accounts</div></div>
+        <div class="int-priority priority-critical">Critical</div>
+      </div>
+      <div class="int-card reveal">
+        <div class="int-icon" style="background:#FFF7ED">🚛</div>
+        <div><div class="int-name">e-Way Bill System</div><div class="int-type">Government API · Sales, Logistics</div></div>
+        <div class="int-priority priority-critical">Critical</div>
+      </div>
+      <div class="int-card reveal">
+        <div class="int-icon" style="background:#F5F3FF">🏦</div>
+        <div><div class="int-name">Bank Payment (NEFT/RTGS)</div><div class="int-type">Bank API / File Export · Accounts, HR</div></div>
+        <div class="int-priority priority-high">High</div>
+      </div>
+      <div class="int-card reveal">
+        <div class="int-icon" style="background:#D1FAE5">💬</div>
+        <div><div class="int-name">WhatsApp / SMS Alerts</div><div class="int-type">Third-party API · MIS, All Modules</div></div>
+        <div class="int-priority priority-medium">Medium</div>
+      </div>
+      <div class="int-card reveal">
+        <div class="int-icon" style="background:#EFF6FF">📧</div>
+        <div><div class="int-name">Email Notifications</div><div class="int-type">SMTP Integration · All Modules</div></div>
+        <div class="int-priority priority-medium">Medium</div>
+      </div>
+      <div class="int-card reveal">
+        <div class="int-icon" style="background:#FDF2F8">📱</div>
+        <div><div class="int-name">Mobile App (Optional)</div><div class="int-type">REST API · MIS, Approvals</div></div>
+        <div class="int-priority priority-low">Low</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GOVERNANCE -->
+<section class="governance-section" id="governance">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-tag">Project Governance</div>
+      <h2 class="section-h">Team Structure & Cadence</h2>
+      <p class="section-p">Clear ownership, bi-weekly Steering Committee reviews, and a formal change request process ensure the project stays on track.</p>
+    </div>
+    <div class="gov-grid">
+      <div class="gov-card reveal">
+        <div class="gov-card-title">🏗️ Project Team Structure</div>
+        <table class="gov-table">
+          <thead><tr><th>Role</th><th>Owner</th></tr></thead>
+          <tbody>
+            <tr><td>ERP Project Sponsor</td><td>MD / Director, JMB Group</td></tr>
+            <tr><td>ERP Project Manager</td><td>Operations Director</td></tr>
+            <tr><td>Module Owners</td><td>All Department Heads</td></tr>
+            <tr><td>ERP Implementation Partner</td><td>Vendor / Consultant Team</td></tr>
+            <tr><td>IT Support Lead</td><td>IT Manager</td></tr>
+            <tr><td>Change Management Lead</td><td>HR Manager</td></tr>
+            <tr><td>Steering Committee</td><td>MD + Finance + Ops Director</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="gov-card reveal">
+        <div class="gov-card-title">📅 Governance Cadence</div>
+        <table class="gov-table">
+          <thead><tr><th>Touchpoint</th><th>Frequency</th></tr></thead>
+          <tbody>
+            <tr><td>Daily Standup (ERP PM + Consultant)</td><td>Daily (10 mins)</td></tr>
+            <tr><td>Module Review (Owners + ERP PM)</td><td>Weekly</td></tr>
+            <tr><td>Steering Committee (MD + Directors)</td><td>Bi-weekly</td></tr>
+            <tr><td>Phase Gate Review</td><td>Per phase transition</td></tr>
+            <tr><td>Post Go-Live Review</td><td>Weekly (first 4 weeks)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="gov-card reveal" style="grid-column:1/-1">
+        <div class="gov-card-title">🔄 Change Request Process</div>
+        <table class="gov-table">
+          <thead><tr><th>Step</th><th>Action</th><th>Trigger</th></tr></thead>
+          <tbody>
+            <tr><td>Step 1 — Raise</td><td>Change request raised in writing by Department Head</td><td>Any scope addition</td></tr>
+            <tr><td>Step 2 — Assess</td><td>ERP Consultant performs impact assessment (timeline + cost)</td><td>Within 2 business days</td></tr>
+            <tr><td>Step 3 — Approve</td><td>Steering Committee approval required</td><td>If impact >2 days OR >INR 25,000</td></tr>
+            <tr><td>Step 4 — Track</td><td>CR log maintained and reviewed at each Steering Committee meeting</td><td>All approved CRs</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GO-LIVE CHECKLIST -->
+<section class="checklist-section" id="checklist">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-tag">Go-Live Readiness</div>
+      <h2 class="section-h">10-Point Go-Live Checklist</h2>
+      <p class="section-p">All items must be completed and signed off before the MD/Director approves system go-live.</p>
+    </div>
+    <div class="checklist-grid">
+
+      <div class="check-item reveal">
+        <div class="check-box"><span class="check-num">01</span></div>
+        <div class="check-body">
+          <div class="check-label">All master data migrated and verified</div>
+          <div class="check-owner">Finance + Department Heads</div>
+        </div>
+      </div>
+
+      <div class="check-item reveal">
+        <div class="check-box"><span class="check-num">02</span></div>
+        <div class="check-body">
+          <div class="check-label">Opening balances confirmed by auditor/finance</div>
+          <div class="check-owner">Finance Manager</div>
+        </div>
+      </div>
+
+      <div class="check-item reveal">
+        <div class="check-box"><span class="check-num">03</span></div>
+        <div class="check-body">
+          <div class="check-label">UAT sign-off received from all module owners</div>
+          <div class="check-owner">ERP Project Manager</div>
+        </div>
+      </div>
+
+      <div class="check-item reveal">
+        <div class="check-box"><span class="check-num">04</span></div>
+        <div class="check-body">
+          <div class="check-label">Integration testing completed (weighbridge, e-invoice)</div>
+          <div class="check-owner">IT + Vendor</div>
+        </div>
+      </div>
+
+      <div class="check-item reveal">
+        <div class="check-box"><span class="check-num">05</span></div>
+        <div class="check-body">
+          <div class="check-label">All users trained — attendance records available</div>
+          <div class="check-owner">HR Manager</div>
+        </div>
+      </div>
+
+      <div class="check-item reveal">
+        <div class="check-box"><span class="check-num">06</span></div>
+        <div class="check-body">
+          <div class="check-label">User IDs and role-based access configured</div>
+          <div class="check-owner">IT + ERP Vendor</div>
+        </div>
+      </div>
+
+      <div class="check-item reveal">
+        <div class="check-box"><span class="check-num">07</span></div>
+        <div class="check-body">
+          <div class="check-label">Parallel run completed — Finance and Inventory</div>
+          <div class="check-owner">Finance Manager (min 2 weeks)</div>
+        </div>
+      </div>
+
+      <div class="check-item reveal">
+        <div class="check-box"><span class="check-num">08</span></div>
+        <div class="check-body">
+          <div class="check-label">Backup and recovery process tested</div>
+          <div class="check-owner">IT Manager</div>
+        </div>
+      </div>
+
+      <div class="check-item reveal">
+        <div class="check-box"><span class="check-num">09</span></div>
+        <div class="check-body">
+          <div class="check-label">Helpdesk / support escalation process live</div>
+          <div class="check-owner">ERP Project Manager</div>
+        </div>
+      </div>
+
+      <div class="check-item reveal" style="border-color:var(--amber);background:var(--amber-light)">
+        <div class="check-box" style="border-color:var(--amber)"><span class="check-num" style="color:var(--amber-dark)">10</span></div>
+        <div class="check-body">
+          <div class="check-label" style="color:var(--amber-dark)">MD / Director sign-off on go-live</div>
+          <div class="check-owner">ERP Project Sponsor — Final Authorization</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>Immediate Next Steps</h2>
+  <p>Finalize vendor selection, nominate module owners, and schedule the kick-off meeting with MD and all department heads.</p>
+  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+    <a href="#modules" class="btn-hero btn-primary">Review All 10 Modules</a>
+    <a href="#checklist" class="btn-hero btn-secondary" style="color:#fff">Go-Live Checklist</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <div class="footer-logo">🌾</div>
+    <div class="footer-name"><strong>JMB Group</strong> · Ricel Mill Division</div>
+  </div>
+  <div class="footer-links">
+    <a href="#modules">Modules</a>
+    <a href="#phases">Roadmap</a>
+    <a href="#kpis">KPIs</a>
+    <a href="#governance">Governance</a>
+  </div>
+  <div class="footer-copy">ERP Implementation Plan v1.0 · June 2026 · Internal — Confidential</div>
+</footer>
+
+<script>
+// Set nav date
+document.getElementById('navDate').textContent =
+  new Date().toLocaleDateString('en-IN',{month:'long',year:'numeric'}) + ' · Week 1';
+
+// Scroll reveal
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, {threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Smooth scroll for nav links
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if(target){ e.preventDefault(); target.scrollIntoView({behavior:'smooth',block:'start'}); }
+  });
+});
+
+// Active nav link on scroll
+const sections = ['modules','phases','kpis','governance','checklist'].map(id=>document.getElementById(id));
+window.addEventListener('scroll', () => {
+  const scrollY = window.scrollY + 80;
+  let active = '';
+  sections.forEach(s => { if(s && s.offsetTop <= scrollY) active = s.id; });
+  document.querySelectorAll('.nav-link').forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#'+active);
+  });
+});
+</script>
+</body>
+</html>

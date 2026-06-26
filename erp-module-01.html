@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 01 — Procurement & Paddy Purchasing | JMB Group ERP</title>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+:root{
+  --green:#1A4731;--green-dark:#0F2D1F;--green-light:#2D6A4A;--green-mid:#245F3E;
+  --emerald:#10B981;--emerald-light:#D1FAE5;--emerald-mid:#A7F3D0;
+  --amber:#F59E0B;--amber-dark:#D97706;--amber-light:#FEF3C7;--amber-mid:#FDE68A;
+  --orange:#F97316;--orange-light:#FFF7ED;
+  --red:#EF4444;--red-light:#FEF2F2;
+  --blue:#3B82F6;--blue-light:#EFF6FF;
+  --purple:#8B5CF6;--purple-light:#F5F3FF;
+  --white:#fff;
+  --gray-50:#F9FAFB;--gray-100:#F3F4F6;--gray-200:#E5E7EB;--gray-300:#D1D5DB;
+  --gray-400:#9CA3AF;--gray-500:#6B7280;--gray-600:#4B5563;--gray-700:#374151;--gray-800:#1F2937;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Lexend',sans-serif;background:var(--gray-100);color:var(--gray-800);height:100vh;overflow:hidden;font-size:13px}
+
+/* ── HEADER ── */
+header{
+  height:54px;display:flex;align-items:center;padding:0 20px;gap:14px;
+  background:var(--green-dark);border-bottom:1px solid rgba(255,255,255,.07);
+  position:relative;z-index:50;flex-shrink:0;
+}
+.hd-back{
+  display:flex;align-items:center;gap:6px;color:rgba(255,255,255,.5);
+  text-decoration:none;font-size:12px;font-weight:500;transition:color .15s;
+}
+.hd-back:hover{color:rgba(255,255,255,.85)}
+.hd-divider{width:1px;height:22px;background:rgba(255,255,255,.1)}
+.hd-breadcrumb{display:flex;align-items:center;gap:6px;font-size:12px}
+.hd-breadcrumb span{color:rgba(255,255,255,.35)}
+.hd-breadcrumb strong{color:#fff;font-weight:600}
+.hd-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.hd-module-badge{
+  display:flex;align-items:center;gap:7px;padding:4px 12px;border-radius:7px;
+  background:rgba(245,158,11,.18);border:1px solid rgba(245,158,11,.3);
+  font-size:11px;font-weight:600;color:var(--amber);
+}
+.hd-user{
+  width:30px;height:30px;border-radius:50%;background:var(--green-light);
+  display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;font-weight:700;
+}
+
+/* ── LAYOUT ── */
+.app{display:flex;height:calc(100vh - 54px)}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:220px;min-width:220px;background:var(--white);
+  border-right:1px solid var(--gray-200);display:flex;flex-direction:column;overflow:hidden;
+}
+.sb-mod-header{
+  padding:16px 16px 12px;border-bottom:1px solid var(--gray-100);
+}
+.sb-mod-icon{
+  width:40px;height:40px;border-radius:9px;background:var(--emerald-light);
+  display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:8px;
+}
+.sb-mod-label{font-size:9px;font-weight:700;color:var(--gray-400);letter-spacing:1.1px;text-transform:uppercase}
+.sb-mod-title{font-size:13px;font-weight:700;color:var(--green-dark);line-height:1.3;margin-top:2px}
+.sb-nav{flex:1;padding:10px 8px;overflow-y:auto}
+.sb-section-label{font-size:9px;font-weight:700;color:var(--gray-400);letter-spacing:1px;text-transform:uppercase;padding:8px 8px 4px}
+.sb-item{
+  display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:7px;
+  cursor:pointer;transition:all .12s;margin-bottom:1px;color:var(--gray-600);font-size:12px;font-weight:500;
+  border:none;background:transparent;font-family:'Lexend',sans-serif;width:100%;text-align:left;
+}
+.sb-item:hover{background:var(--gray-100);color:var(--gray-800)}
+.sb-item.active{background:var(--emerald-light);color:var(--green);}
+.sb-item.active .sb-icon{opacity:1}
+.sb-icon{font-size:14px;opacity:.6;flex-shrink:0}
+.sb-badge{margin-left:auto;font-size:9px;font-weight:700;padding:1px 6px;border-radius:100px;background:var(--amber-light);color:var(--amber-dark)}
+.sb-footer{padding:12px 16px;border-top:1px solid var(--gray-100)}
+.sb-progress-label{display:flex;justify-content:space-between;font-size:10px;color:var(--gray-500);margin-bottom:5px}
+.sb-progress-track{height:5px;background:var(--gray-200);border-radius:3px;overflow:hidden}
+.sb-progress-fill{height:100%;border-radius:3px;background:var(--emerald);width:68%}
+
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.main-toolbar{
+  padding:0 20px;height:46px;display:flex;align-items:center;gap:10px;
+  background:var(--white);border-bottom:1px solid var(--gray-200);flex-shrink:0;
+}
+.toolbar-title{font-size:14px;font-weight:700;color:var(--green-dark)}
+.toolbar-sub{font-size:11px;color:var(--gray-400);margin-left:4px}
+.toolbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.btn{
+  display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:7px;
+  font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;
+  font-family:'Lexend',sans-serif;border:none;
+}
+.btn-primary{background:var(--green);color:#fff}
+.btn-primary:hover{background:var(--green-light)}
+.btn-amber{background:var(--amber);color:var(--green-dark)}
+.btn-amber:hover{background:var(--amber-dark)}
+.btn-ghost{background:transparent;color:var(--gray-600);border:1px solid var(--gray-200)}
+.btn-ghost:hover{background:var(--gray-100)}
+.btn-sm{padding:4px 10px;font-size:11px}
+
+.main-body{flex:1;overflow-y:auto;padding:18px 20px}
+.main-body::-webkit-scrollbar{width:4px}
+.main-body::-webkit-scrollbar-thumb{background:var(--gray-300);border-radius:2px}
+
+/* ── KPI ROW ── */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px}
+.kpi-card{
+  background:var(--white);border:1px solid var(--gray-200);border-radius:10px;
+  padding:14px 16px;position:relative;overflow:hidden;
+}
+.kpi-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--k-color,var(--emerald))}
+.kpi-label{font-size:10px;color:var(--gray-500);font-weight:500;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi-val{font-size:22px;font-weight:800;color:var(--gray-800);line-height:1;margin-bottom:4px}
+.kpi-sub{font-size:10px;color:var(--gray-400);display:flex;align-items:center;gap:4px}
+.kpi-ico{position:absolute;top:10px;right:12px;font-size:18px;opacity:.12}
+.badge-up{font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;background:var(--emerald-light);color:#065F46}
+.badge-down{font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;background:var(--red-light);color:#991B1B}
+.badge-info{font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;background:var(--blue-light);color:#1E40AF}
+
+/* ── CHART ROW ── */
+.chart-row{display:grid;grid-template-columns:1.5fr 1fr;gap:12px;margin-bottom:16px}
+.chart-card{background:var(--white);border:1px solid var(--gray-200);border-radius:10px;overflow:hidden}
+.card-hdr{padding:11px 16px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:13px;font-weight:700;color:var(--gray-800)}
+.card-meta{font-size:10px;color:var(--gray-400)}
+.card-body{padding:14px;position:relative;height:190px}
+
+/* ── TABLE CARD ── */
+.tbl-card{background:var(--white);border:1px solid var(--gray-200);border-radius:10px;overflow:hidden;margin-bottom:16px}
+.tbl-toolbar{
+  padding:10px 16px;border-bottom:1px solid var(--gray-100);
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+}
+.tbl-title{font-size:13px;font-weight:700;color:var(--gray-800)}
+.search-box{
+  display:flex;align-items:center;gap:6px;padding:5px 10px;
+  background:var(--gray-50);border:1px solid var(--gray-200);border-radius:7px;
+}
+.search-box input{
+  border:none;background:transparent;outline:none;font-family:'Lexend',sans-serif;
+  font-size:12px;color:var(--gray-700);width:160px;
+}
+.search-box input::placeholder{color:var(--gray-400)}
+.filter-select{
+  padding:5px 10px;border:1px solid var(--gray-200);border-radius:7px;
+  background:var(--gray-50);font-family:'Lexend',sans-serif;font-size:12px;
+  color:var(--gray-700);outline:none;cursor:pointer;
+}
+.tbl-wrap{overflow:auto;max-height:320px}
+.tbl-wrap::-webkit-scrollbar{width:3px;height:3px}
+.tbl-wrap::-webkit-scrollbar-thumb{background:var(--gray-300);border-radius:2px}
+table{width:100%;border-collapse:collapse;min-width:800px}
+thead th{
+  padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--gray-500);
+  background:var(--gray-50);border-bottom:1px solid var(--gray-200);white-space:nowrap;
+  position:sticky;top:0;letter-spacing:.5px;text-transform:uppercase;
+}
+thead th.sortable{cursor:pointer;user-select:none}
+thead th.sortable:hover{color:var(--green)}
+tbody td{padding:9px 12px;font-size:12px;color:var(--gray-700);border-bottom:1px solid var(--gray-100)}
+tbody tr:hover td{background:var(--gray-50)}
+tbody tr:last-child td{border-bottom:none}
+.td-bold{font-weight:600;color:var(--gray-800)}
+.td-mono{font-family:'JetBrains Mono',monospace;font-size:11px}
+.td-action{display:flex;gap:5px}
+.icon-btn{
+  width:26px;height:26px;border-radius:5px;border:1px solid var(--gray-200);
+  background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:12px;transition:all .12s;
+}
+.icon-btn:hover{background:var(--gray-100)}
+.tbl-footer{padding:8px 16px;border-top:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between}
+.tbl-count{font-size:11px;color:var(--gray-400)}
+.tbl-pages{display:flex;gap:4px}
+.page-btn{
+  width:26px;height:26px;border-radius:5px;border:1px solid var(--gray-200);
+  background:transparent;cursor:pointer;font-size:11px;font-family:'Lexend',sans-serif;
+  color:var(--gray-600);transition:all .12s;
+}
+.page-btn.active{background:var(--green);color:#fff;border-color:var(--green)}
+.page-btn:hover:not(.active){background:var(--gray-100)}
+
+/* ── STATUS BADGES ── */
+.status{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:100px;font-size:10px;font-weight:600;white-space:nowrap}
+.s-approved{background:#D1FAE5;color:#065F46}
+.s-pending{background:var(--amber-light);color:#92400E}
+.s-grn{background:var(--blue-light);color:#1E40AF}
+.s-hold{background:var(--red-light);color:#991B1B}
+.s-partial{background:var(--purple-light);color:#5B21B6}
+.s-closed{background:var(--gray-100);color:var(--gray-600)}
+.s-dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+/* ── MODAL ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(15,45,31,.5);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:var(--white);border-radius:12px;width:560px;max-width:95vw;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(15,45,31,.25);animation:mIn .18s ease}
+.modal-lg{width:760px}
+@keyframes mIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+.modal-hdr{padding:16px 20px;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.modal-hdr h3{font-size:15px;font-weight:700;color:var(--green-dark)}
+.modal-body{padding:20px;overflow-y:auto;flex:1}
+.modal-body::-webkit-scrollbar{width:3px}
+.modal-body::-webkit-scrollbar-thumb{background:var(--gray-300)}
+.modal-ftr{padding:12px 20px;border-top:1px solid var(--gray-200);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0}
+.close-btn{width:28px;height:28px;border-radius:6px;border:none;background:transparent;cursor:pointer;color:var(--gray-400);font-size:16px;display:flex;align-items:center;justify-content:center}
+.close-btn:hover{background:var(--gray-100);color:var(--gray-700)}
+
+/* ── FORMS ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.form-full{grid-column:1/-1}
+.form-group{display:flex;flex-direction:column;gap:4px}
+.form-group label{font-size:10px;font-weight:700;color:var(--gray-600);letter-spacing:.4px;text-transform:uppercase}
+.form-group input,.form-group select,.form-group textarea{
+  padding:8px 10px;border:1px solid var(--gray-200);border-radius:7px;
+  background:var(--gray-50);font-family:'Lexend',sans-serif;font-size:12px;color:var(--gray-800);
+  outline:none;transition:border .12s,box-shadow .12s;
+}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{
+  border-color:var(--emerald);box-shadow:0 0 0 3px rgba(16,185,129,.1);background:var(--white);
+}
+.form-group textarea{resize:vertical;min-height:72px;line-height:1.6}
+.form-group select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%239CA3AF' stroke-width='1.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+.form-section-title{font-size:11px;font-weight:700;color:var(--green-mid);text-transform:uppercase;letter-spacing:.6px;margin:16px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--gray-100)}
+.form-hint{font-size:10px;color:var(--gray-400);margin-top:2px}
+.form-calc{background:var(--emerald-light);border:1px solid var(--emerald-mid);border-radius:7px;padding:10px 12px;margin-top:12px}
+.form-calc-title{font-size:10px;font-weight:700;color:var(--green-mid);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px}
+.form-calc-row{display:flex;justify-content:space-between;font-size:12px;padding:2px 0}
+.form-calc-row.total{font-weight:700;color:var(--green-dark);border-top:1px solid var(--emerald-mid);margin-top:4px;padding-top:5px}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:20px;right:20px;z-index:999;background:var(--green-dark);
+  color:#fff;padding:10px 16px;border-radius:8px;font-size:12px;font-weight:500;
+  display:flex;align-items:center;gap:7px;box-shadow:0 8px 24px rgba(15,45,31,.35);
+  transform:translateY(60px);opacity:0;transition:all .25s;
+}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* ── DETAIL PANEL ── */
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.detail-section{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:8px;padding:14px}
+.detail-section-title{font-size:10px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px}
+.detail-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--gray-100)}
+.detail-row:last-child{border-bottom:none}
+.detail-key{font-size:11px;color:var(--gray-500)}
+.detail-val{font-size:12px;font-weight:600;color:var(--gray-800);text-align:right}
+.detail-full{grid-column:1/-1}
+
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <a href="erp-home.html" class="hd-back">
+    ← Back
+  </a>
+  <div class="hd-divider"></div>
+  <div class="hd-breadcrumb">
+    <span>JMB Group ERP</span>
+    <span>›</span>
+    <strong>Module 01 — Procurement & Paddy Purchasing</strong>
+  </div>
+  <div class="hd-right">
+    <div class="hd-module-badge">🌾 Procurement</div>
+    <div class="hd-user">PM</div>
+  </div>
+</header>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-mod-header">
+      <div class="sb-mod-icon">🌾</div>
+      <div class="sb-mod-label">Module 01</div>
+      <div class="sb-mod-title">Procurement &amp; Paddy Purchasing</div>
+    </div>
+    <div class="sb-nav">
+      <div class="sb-section-label">Main</div>
+      <button class="sb-item active" onclick="showSection('dashboard')"><span class="sb-icon">📊</span>Dashboard</button>
+      <button class="sb-item" onclick="showSection('po')"><span class="sb-icon">📋</span>Purchase Orders<span class="sb-badge" id="poBadge">12</span></button>
+      <button class="sb-item" onclick="showSection('grn')"><span class="sb-icon">📦</span>GRN Register<span class="sb-badge" id="grnBadge">9</span></button>
+      <button class="sb-item" onclick="showSection('gate')"><span class="sb-icon">⚖️</span>Gate Entry</button>
+
+      <div class="sb-section-label" style="margin-top:8px">Masters</div>
+      <button class="sb-item" onclick="showSection('vendors')"><span class="sb-icon">👨‍🌾</span>Vendor/Farmer Master</button>
+      <button class="sb-item" onclick="showSection('rates')"><span class="sb-icon">💰</span>Rate Card</button>
+      <button class="sb-item" onclick="showSection('grades')"><span class="sb-icon">🏷️</span>Paddy Grades</button>
+
+      <div class="sb-section-label" style="margin-top:8px">Transactions</div>
+      <button class="sb-item" onclick="showSection('payments')"><span class="sb-icon">💳</span>Payments & Advance</button>
+      <button class="sb-item" onclick="showSection('returns')"><span class="sb-icon">↩️</span>Purchase Returns</button>
+      <button class="sb-item" onclick="showSection('holds')"><span class="sb-icon">🚫</span>Quality Holds<span class="sb-badge" style="background:#FEE2E2;color:#991B1B" id="holdBadge">3</span></button>
+
+      <div class="sb-section-label" style="margin-top:8px">Reports</div>
+      <button class="sb-item" onclick="showSection('costtrack')"><span class="sb-icon">📈</span>Cost Tracking</button>
+      <button class="sb-item" onclick="showSection('reports')"><span class="sb-icon">📄</span>Reports &amp; Export</button>
+    </div>
+    <div class="sb-footer">
+      <div class="sb-progress-label"><span>Module Progress</span><span style="color:var(--emerald);font-weight:600">Week 1–3</span></div>
+      <div class="sb-progress-track"><div class="sb-progress-fill"></div></div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <!-- TOOLBAR -->
+    <div class="main-toolbar">
+      <span class="toolbar-title" id="toolbarTitle">Dashboard</span>
+      <span class="toolbar-sub" id="toolbarSub">Procurement Overview · Today</span>
+      <div class="toolbar-right">
+        <button class="btn btn-ghost btn-sm" onclick="exportExcel()">⬇ Export</button>
+        <button class="btn btn-amber btn-sm" onclick="openNewPO()">＋ New Purchase Order</button>
+        <button class="btn btn-primary btn-sm" onclick="openGateEntry()">⚖️ Gate Entry</button>
+      </div>
+    </div>
+
+    <!-- MAIN BODY -->
+    <div class="main-body">
+
+      <!-- ── DASHBOARD ── -->
+      <div id="sec-dashboard">
+        <div class="kpi-row">
+          <div class="kpi-card" style="--k-color:#10B981">
+            <div class="kpi-ico">🌾</div>
+            <div class="kpi-label">Total Paddy Procured</div>
+            <div class="kpi-val" id="k1">842 MT</div>
+            <div class="kpi-sub"><span class="badge-up">▲ 12%</span> vs last week</div>
+          </div>
+          <div class="kpi-card" style="--k-color:#F59E0B">
+            <div class="kpi-ico">📋</div>
+            <div class="kpi-label">Open Purchase Orders</div>
+            <div class="kpi-val">12</div>
+            <div class="kpi-sub"><span class="badge-info">3 Pending Approval</span></div>
+          </div>
+          <div class="kpi-card" style="--k-color:#3B82F6">
+            <div class="kpi-ico">📦</div>
+            <div class="kpi-label">GRNs This Week</div>
+            <div class="kpi-val">9</div>
+            <div class="kpi-sub"><span class="badge-up">All Accepted</span></div>
+          </div>
+          <div class="kpi-card" style="--k-color:#EF4444">
+            <div class="kpi-ico">🚫</div>
+            <div class="kpi-label">Lots on Quality Hold</div>
+            <div class="kpi-val">3</div>
+            <div class="kpi-sub"><span class="badge-down">Pending QC Release</span></div>
+          </div>
+          <div class="kpi-card" style="--k-color:#8B5CF6">
+            <div class="kpi-ico">💰</div>
+            <div class="kpi-label">Pending Farmer Payments</div>
+            <div class="kpi-val">₹18.4L</div>
+            <div class="kpi-sub"><span class="badge-info">6 Vendors</span></div>
+          </div>
+        </div>
+
+        <div class="chart-row">
+          <div class="chart-card">
+            <div class="card-hdr">
+              <div class="card-title">Daily Paddy Intake — This Week (MT)</div>
+              <span class="card-meta" id="chartWeekLabel">June 2026</span>
+            </div>
+            <div class="card-body"><canvas id="intakeChart"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="card-hdr">
+              <div class="card-title">Procurement by Variety</div>
+              <span class="card-meta">Current Stock</span>
+            </div>
+            <div class="card-body"><canvas id="varietyChart"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Recent POs table inline -->
+        <div class="tbl-card">
+          <div class="tbl-toolbar">
+            <span class="tbl-title">Recent Purchase Orders</span>
+            <div class="search-box">
+              <span>🔍</span>
+              <input type="text" placeholder="Search PO / Vendor…" oninput="filterPO(this.value)">
+            </div>
+            <select class="filter-select" onchange="filterPOStatus(this.value)">
+              <option value="">All Status</option>
+              <option value="Approved">Approved</option>
+              <option value="Pending">Pending</option>
+              <option value="GRN Done">GRN Done</option>
+              <option value="Hold">Hold</option>
+            </select>
+          </div>
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th class="sortable">PO No.</th>
+                  <th class="sortable">Vendor / Farmer</th>
+                  <th class="sortable">Paddy Variety</th>
+                  <th class="sortable">Ordered Qty</th>
+                  <th class="sortable">Rate (₹/Qt)</th>
+                  <th class="sortable">Total Value</th>
+                  <th>Grade</th>
+                  <th>PO Date</th>
+                  <th class="sortable">Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="poTbody"></tbody>
+            </table>
+          </div>
+          <div class="tbl-footer">
+            <span class="tbl-count" id="poCount">Showing 12 records</span>
+            <div class="tbl-pages">
+              <button class="page-btn active">1</button>
+              <button class="page-btn">2</button>
+            </div>
+          </div>
+        </div>
+      </div><!-- end dashboard -->
+
+      <!-- ── PO SECTION ── -->
+      <div id="sec-po" class="hidden">
+        <div class="tbl-card">
+          <div class="tbl-toolbar">
+            <span class="tbl-title">All Purchase Orders</span>
+            <div class="search-box">
+              <span>🔍</span>
+              <input type="text" placeholder="Search PO / Vendor / Variety…" oninput="filterPO(this.value)">
+            </div>
+            <select class="filter-select" onchange="filterPOStatus(this.value)">
+              <option value="">All Status</option>
+              <option value="Approved">Approved</option>
+              <option value="Pending">Pending</option>
+              <option value="GRN Done">GRN Done</option>
+              <option value="Hold">Hold</option>
+            </select>
+            <div style="margin-left:auto">
+              <button class="btn btn-amber btn-sm" onclick="openNewPO()">＋ New PO</button>
+            </div>
+          </div>
+          <div class="tbl-wrap" style="max-height:480px">
+            <table>
+              <thead>
+                <tr>
+                  <th>PO No.</th><th>Vendor / Farmer</th><th>Paddy Variety</th>
+                  <th>Ordered Qty</th><th>Rate (₹/Qt)</th><th>Total Value</th>
+                  <th>Grade</th><th>PO Date</th><th>Delivery Date</th><th>Status</th><th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="poTbody2"></tbody>
+            </table>
+          </div>
+          <div class="tbl-footer">
+            <span class="tbl-count" id="poCount2">12 records</span>
+            <div class="tbl-pages">
+              <button class="page-btn active">1</button>
+              <button class="page-btn">2</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── GRN SECTION ── -->
+      <div id="sec-grn" class="hidden">
+        <div class="tbl-card">
+          <div class="tbl-toolbar">
+            <span class="tbl-title">Goods Receipt Note (GRN) Register</span>
+            <div class="search-box"><span>🔍</span><input type="text" placeholder="Search GRN / PO…" oninput="filterGRN(this.value)"></div>
+            <div style="margin-left:auto"><button class="btn btn-primary btn-sm" onclick="openNewGRN()">＋ New GRN</button></div>
+          </div>
+          <div class="tbl-wrap" style="max-height:480px">
+            <table>
+              <thead>
+                <tr><th>GRN No.</th><th>Linked PO</th><th>Vendor</th><th>Variety</th><th>Gross Wt</th><th>Tare Wt</th><th>Net Wt</th><th>Moisture %</th><th>Grade</th><th>Status</th><th>Date</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="grnTbody"></tbody>
+            </table>
+          </div>
+          <div class="tbl-footer"><span class="tbl-count" id="grnCount">9 records</span></div>
+        </div>
+      </div>
+
+      <!-- ── GATE ENTRY SECTION ── -->
+      <div id="sec-gate" class="hidden">
+        <div class="tbl-card">
+          <div class="tbl-toolbar">
+            <span class="tbl-title">Gate Entry Log</span>
+            <div style="margin-left:auto"><button class="btn btn-primary btn-sm" onclick="openGateEntry()">⚖️ New Gate Entry</button></div>
+          </div>
+          <div class="tbl-wrap" style="max-height:480px">
+            <table>
+              <thead>
+                <tr><th>Entry No.</th><th>Vehicle No.</th><th>Vendor</th><th>Variety</th><th>Gross Wt (Kg)</th><th>Tare Wt (Kg)</th><th>Net Wt (Kg)</th><th>Moisture %</th><th>Entry Time</th><th>Gate Pass</th><th>Status</th></tr>
+              </thead>
+              <tbody id="gateTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── VENDORS SECTION ── -->
+      <div id="sec-vendors" class="hidden">
+        <div class="tbl-card">
+          <div class="tbl-toolbar">
+            <span class="tbl-title">Vendor & Farmer Master</span>
+            <div class="search-box"><span>🔍</span><input type="text" placeholder="Search vendor…" oninput="filterVendors(this.value)"></div>
+            <div style="margin-left:auto"><button class="btn btn-primary btn-sm" onclick="openNewVendor()">＋ Add Vendor</button></div>
+          </div>
+          <div class="tbl-wrap" style="max-height:480px">
+            <table>
+              <thead>
+                <tr><th>Vendor Code</th><th>Name</th><th>Type</th><th>Village/Town</th><th>Mobile</th><th>Bank Account</th><th>Credit Limit</th><th>Total POs</th><th>Pending Payment</th><th>Status</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="vendorTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── RATE CARD ── -->
+      <div id="sec-rates" class="hidden">
+        <div class="tbl-card">
+          <div class="tbl-toolbar">
+            <span class="tbl-title">Paddy Rate Card — June 2026</span>
+            <div style="margin-left:auto;display:flex;gap:8px">
+              <select class="filter-select"><option>Kharif 2025–26</option><option>Rabi 2025</option></select>
+              <button class="btn btn-primary btn-sm" onclick="openNewRate()">＋ Add Rate</button>
+            </div>
+          </div>
+          <div class="tbl-wrap" style="max-height:480px">
+            <table>
+              <thead>
+                <tr><th>Variety</th><th>Grade</th><th>Min Rate (₹/Qt)</th><th>Max Rate (₹/Qt)</th><th>Current Rate</th><th>MSP (₹/Qt)</th><th>Season</th><th>Effective From</th><th>Updated By</th></tr>
+              </thead>
+              <tbody id="rateTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PAYMENTS ── -->
+      <div id="sec-payments" class="hidden">
+        <div class="kpi-row">
+          <div class="kpi-card" style="--k-color:#10B981"><div class="kpi-label">Total Advances Paid</div><div class="kpi-val">₹6.2L</div><div class="kpi-sub">This month</div></div>
+          <div class="kpi-card" style="--k-color:#F59E0B"><div class="kpi-label">Pending Settlements</div><div class="kpi-val">₹18.4L</div><div class="kpi-sub">6 Vendors</div></div>
+          <div class="kpi-card" style="--k-color:#3B82F6"><div class="kpi-label">Payments Done</div><div class="kpi-val">₹42.8L</div><div class="kpi-sub">This month</div></div>
+          <div class="kpi-card" style="--k-color:#EF4444"><div class="kpi-label">Overdue (>15 days)</div><div class="kpi-val">₹3.1L</div><div class="kpi-sub">2 Vendors</div></div>
+          <div class="kpi-card" style="--k-color:#8B5CF6"><div class="kpi-label">TDS Deducted</div><div class="kpi-val">₹0.92L</div><div class="kpi-sub">@2% on eligible</div></div>
+        </div>
+        <div class="tbl-card">
+          <div class="tbl-toolbar">
+            <span class="tbl-title">Farmer Advance & Payment Ledger</span>
+            <div style="margin-left:auto"><button class="btn btn-amber btn-sm" onclick="openPaymentModal()">＋ Record Payment</button></div>
+          </div>
+          <div class="tbl-wrap" style="max-height:380px">
+            <table>
+              <thead><tr><th>Vendor</th><th>GRN Ref.</th><th>Paddy Value</th><th>Advance Paid</th><th>Deductions</th><th>Net Payable</th><th>Paid</th><th>Balance</th><th>Payment Date</th><th>Mode</th><th>Status</th></tr></thead>
+              <tbody id="payTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── RETURNS ── -->
+      <div id="sec-returns" class="hidden">
+        <div class="tbl-card">
+          <div class="tbl-toolbar">
+            <span class="tbl-title">Purchase Returns & Debit Notes</span>
+            <div style="margin-left:auto"><button class="btn btn-primary btn-sm" onclick="openReturnModal()">＋ New Return</button></div>
+          </div>
+          <div class="tbl-wrap" style="max-height:480px">
+            <table>
+              <thead><tr><th>Return No.</th><th>Orig. GRN</th><th>Vendor</th><th>Variety</th><th>Qty Returned</th><th>Return Reason</th><th>Debit Note No.</th><th>Value</th><th>Return Date</th><th>Status</th></tr></thead>
+              <tbody id="returnTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── HOLDS ── -->
+      <div id="sec-holds" class="hidden">
+        <div class="tbl-card">
+          <div class="tbl-toolbar">
+            <span class="tbl-title">Quality Hold Register</span>
+            <span style="font-size:11px;color:var(--red);font-weight:600;margin-left:8px">● 3 Lots Pending QC Release</span>
+          </div>
+          <div class="tbl-wrap" style="max-height:480px">
+            <table>
+              <thead><tr><th>Hold Ref.</th><th>GRN No.</th><th>Vendor</th><th>Variety</th><th>Qty (Kg)</th><th>Moisture %</th><th>Hold Reason</th><th>Hold Date</th><th>QC Status</th><th>Released By</th><th>Actions</th></tr></thead>
+              <tbody id="holdTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── GRADES ── -->
+      <div id="sec-grades" class="hidden">
+        <div class="tbl-card">
+          <div class="tbl-toolbar">
+            <span class="tbl-title">Paddy Grade Master</span>
+            <div style="margin-left:auto"><button class="btn btn-primary btn-sm">＋ Add Grade</button></div>
+          </div>
+          <div class="tbl-wrap" style="max-height:480px">
+            <table>
+              <thead><tr><th>Grade Code</th><th>Grade Name</th><th>Moisture Max %</th><th>Broken Max %</th><th>Foreign Matter Max %</th><th>Price Premium/Discount</th><th>Applicable Varieties</th><th>Status</th></tr></thead>
+              <tbody id="gradeTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── COST TRACKING ── -->
+      <div id="sec-costtrack" class="hidden">
+        <div class="kpi-row">
+          <div class="kpi-card" style="--k-color:#10B981"><div class="kpi-label">Avg Paddy Cost/Qt</div><div class="kpi-val">₹2,215</div><div class="kpi-sub">All varieties</div></div>
+          <div class="kpi-card" style="--k-color:#F59E0B"><div class="kpi-label">Freight Cost/MT</div><div class="kpi-val">₹380</div><div class="kpi-sub">This month avg</div></div>
+          <div class="kpi-card" style="--k-color:#3B82F6"><div class="kpi-label">Loading/Unloading/MT</div><div class="kpi-val">₹120</div><div class="kpi-sub">Labour cost</div></div>
+          <div class="kpi-card" style="--k-color:#8B5CF6"><div class="kpi-label">Total Procurement Cost/MT</div><div class="kpi-val">₹22,650</div><div class="kpi-sub">Paddy+Freight+Labour</div></div>
+          <div class="kpi-card" style="--k-color:#EF4444"><div class="kpi-label">Wastage / Rejection Loss</div><div class="kpi-val">₹1.2L</div><div class="kpi-sub">This month</div></div>
+        </div>
+        <div class="tbl-card">
+          <div class="tbl-toolbar"><span class="tbl-title">Procurement Cost Breakdown — By Lot</span></div>
+          <div class="tbl-wrap" style="max-height:380px">
+            <table>
+              <thead><tr><th>GRN No.</th><th>Vendor</th><th>Variety</th><th>Net Qty (Kg)</th><th>Paddy Cost</th><th>Freight</th><th>Loading</th><th>Unloading</th><th>Other</th><th>Total Cost</th><th>Cost/Qt</th></tr></thead>
+              <tbody id="costTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── REPORTS ── -->
+      <div id="sec-reports" class="hidden">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+          <div class="chart-card" style="cursor:pointer" onclick="exportExcel()">
+            <div class="card-hdr"><div class="card-title">📊 Procurement Summary</div></div>
+            <div style="padding:20px;font-size:12px;color:var(--gray-500)">All POs, GRNs, vendor-wise summary. Export as Excel.</div>
+            <div style="padding:0 16px 16px"><button class="btn btn-ghost btn-sm">⬇ Download Excel</button></div>
+          </div>
+          <div class="chart-card" style="cursor:pointer">
+            <div class="card-hdr"><div class="card-title">🌾 Variety-wise Report</div></div>
+            <div style="padding:20px;font-size:12px;color:var(--gray-500)">Procurement quantity and cost per paddy variety this season.</div>
+            <div style="padding:0 16px 16px"><button class="btn btn-ghost btn-sm">⬇ Download Excel</button></div>
+          </div>
+          <div class="chart-card" style="cursor:pointer">
+            <div class="card-hdr"><div class="card-title">💰 Payment Ledger</div></div>
+            <div style="padding:20px;font-size:12px;color:var(--gray-500)">Farmer-wise advance, deductions, payments, and outstanding balance.</div>
+            <div style="padding:0 16px 16px"><button class="btn btn-ghost btn-sm">⬇ Download Excel</button></div>
+          </div>
+          <div class="chart-card" style="cursor:pointer">
+            <div class="card-hdr"><div class="card-title">📈 Cost Analysis</div></div>
+            <div style="padding:20px;font-size:12px;color:var(--gray-500)">Procurement cost per MT trend — paddy, freight, labour breakdown.</div>
+            <div style="padding:0 16px 16px"><button class="btn btn-ghost btn-sm">⬇ Download Excel</button></div>
+          </div>
+          <div class="chart-card" style="cursor:pointer">
+            <div class="card-hdr"><div class="card-title">🚫 Quality Hold Report</div></div>
+            <div style="padding:20px;font-size:12px;color:var(--gray-500)">All lots on hold — moisture failures, rejection details.</div>
+            <div style="padding:0 16px 16px"><button class="btn btn-ghost btn-sm">⬇ Download Excel</button></div>
+          </div>
+          <div class="chart-card" style="cursor:pointer">
+            <div class="card-hdr"><div class="card-title">↩️ Returns & Debit Notes</div></div>
+            <div style="padding:20px;font-size:12px;color:var(--gray-500)">Purchase return register with debit note details and vendor impact.</div>
+            <div style="padding:0 16px 16px"><button class="btn btn-ghost btn-sm">⬇ Download Excel</button></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- main-body -->
+  </div><!-- main -->
+</div><!-- app -->
+
+<!-- ─── NEW PO MODAL ─── -->
+<div class="overlay" id="poModal">
+  <div class="modal modal-lg">
+    <div class="modal-hdr">
+      <h3>🌾 New Purchase Order</h3>
+      <button class="close-btn" onclick="closeModal('poModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-section-title">Order Details</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Vendor / Farmer *</label>
+          <select id="po_vendor" onchange="autoRate()">
+            <option value="">— Select Vendor —</option>
+            <option>Ramesh Kumar Yadav</option>
+            <option>Shyam Lal Farmer</option>
+            <option>Gita Devi Agri</option>
+            <option>Suresh Mandal</option>
+            <option>Bijay Agarwal Trading</option>
+            <option>Mohan Rice Suppliers</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>PO Date *</label>
+          <input type="date" id="po_date">
+        </div>
+        <div class="form-group">
+          <label>Paddy Variety *</label>
+          <select id="po_variety" onchange="autoRate()">
+            <option value="">— Select Variety —</option>
+            <option value="MTU7029">MTU-7029 (Swarna)</option>
+            <option value="IR64">IR-64</option>
+            <option value="PR106">PR-106</option>
+            <option value="BPT5204">BPT-5204 (Samba Masuri)</option>
+            <option value="CR1009">CR-1009 (Durga)</option>
+            <option value="Sona">Sona Masoori</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Grade</label>
+          <select id="po_grade">
+            <option>A Grade</option>
+            <option>B Grade</option>
+            <option>C Grade</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Ordered Quantity (Quintals) *</label>
+          <input type="number" id="po_qty" placeholder="e.g. 500" oninput="calcPOTotal()">
+        </div>
+        <div class="form-group">
+          <label>Rate (₹ per Quintal) *</label>
+          <input type="number" id="po_rate" placeholder="e.g. 2200" oninput="calcPOTotal()">
+          <span class="form-hint" id="po_rate_hint">MSP 2025–26: ₹2,183/Qt for common paddy</span>
+        </div>
+        <div class="form-group">
+          <label>Expected Delivery Date</label>
+          <input type="date" id="po_delivery">
+        </div>
+        <div class="form-group">
+          <label>Delivery Location</label>
+          <select id="po_location">
+            <option>Mill Gate</option>
+            <option>Warehouse A</option>
+            <option>Warehouse B</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-section-title">Cost Components</div>
+      <div class="form-grid-3">
+        <div class="form-group">
+          <label>Freight (₹/Qt)</label>
+          <input type="number" id="po_freight" placeholder="0" value="38" oninput="calcPOTotal()">
+        </div>
+        <div class="form-group">
+          <label>Loading Charge (₹/Qt)</label>
+          <input type="number" id="po_loading" placeholder="0" value="6" oninput="calcPOTotal()">
+        </div>
+        <div class="form-group">
+          <label>Advance Payment (₹)</label>
+          <input type="number" id="po_advance" placeholder="0" oninput="calcPOTotal()">
+        </div>
+      </div>
+
+      <div class="form-calc" id="poCalcBox">
+        <div class="form-calc-title">Order Value Summary</div>
+        <div class="form-calc-row"><span>Paddy Value</span><span id="calc_paddy">₹ 0</span></div>
+        <div class="form-calc-row"><span>Freight</span><span id="calc_freight">₹ 0</span></div>
+        <div class="form-calc-row"><span>Loading</span><span id="calc_loading">₹ 0</span></div>
+        <div class="form-calc-row"><span>Advance Paid</span><span id="calc_advance">₹ 0</span></div>
+        <div class="form-calc-row total"><span>Gross Total</span><span id="calc_total">₹ 0</span></div>
+        <div class="form-calc-row total" style="color:var(--green-mid)"><span>Net Payable on Delivery</span><span id="calc_net">₹ 0</span></div>
+      </div>
+
+      <div class="form-section-title">Additional</div>
+      <div class="form-grid">
+        <div class="form-group form-full">
+          <label>Terms & Special Instructions</label>
+          <textarea id="po_notes" placeholder="Payment terms, moisture tolerance, vehicle type…"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-ftr">
+      <button class="btn btn-ghost" onclick="closeModal('poModal')">Cancel</button>
+      <button class="btn btn-ghost" onclick="saveDraftPO()">Save Draft</button>
+      <button class="btn btn-primary" onclick="submitPO()">Submit for Approval</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── GATE ENTRY MODAL ─── -->
+<div class="overlay" id="gateModal">
+  <div class="modal modal-lg">
+    <div class="modal-hdr">
+      <h3>⚖️ Weighbridge Gate Entry</h3>
+      <button class="close-btn" onclick="closeModal('gateModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-section-title">Vehicle & Vendor Details</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Linked PO No.</label>
+          <select id="gate_po">
+            <option value="">— Select PO —</option>
+            <option>PO-2026-001</option><option>PO-2026-002</option><option>PO-2026-003</option>
+            <option>PO-2026-004</option><option>PO-2026-005</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Vehicle Number *</label>
+          <input type="text" id="gate_vehicle" placeholder="e.g. JH 05 AB 1234">
+        </div>
+        <div class="form-group">
+          <label>Driver Name</label>
+          <input type="text" id="gate_driver" placeholder="Driver name">
+        </div>
+        <div class="form-group">
+          <label>Entry Date & Time</label>
+          <input type="datetime-local" id="gate_time">
+        </div>
+      </div>
+
+      <div class="form-section-title">Weight Capture (Weighbridge)</div>
+      <div class="form-grid-3">
+        <div class="form-group">
+          <label>Gross Weight (Kg) *</label>
+          <input type="number" id="gate_gross" placeholder="Vehicle + Paddy" oninput="calcNetWeight()">
+        </div>
+        <div class="form-group">
+          <label>Tare Weight (Kg) *</label>
+          <input type="number" id="gate_tare" placeholder="Empty vehicle" oninput="calcNetWeight()">
+        </div>
+        <div class="form-group">
+          <label>Net Weight (Kg)</label>
+          <input type="number" id="gate_net" placeholder="Auto-calculated" readonly style="background:var(--emerald-light);font-weight:700">
+        </div>
+      </div>
+
+      <div class="form-section-title">Quality Parameters at Gate</div>
+      <div class="form-grid-3">
+        <div class="form-group">
+          <label>Moisture % *</label>
+          <input type="number" id="gate_moisture" placeholder="e.g. 14.2" step="0.1" oninput="checkMoisture()">
+          <span class="form-hint" id="moisture_hint">Acceptable: ≤ 17%</span>
+        </div>
+        <div class="form-group">
+          <label>Foreign Matter %</label>
+          <input type="number" id="gate_fm" placeholder="e.g. 1.5" step="0.1">
+        </div>
+        <div class="form-group">
+          <label>Paddy Variety</label>
+          <select id="gate_variety">
+            <option>MTU-7029 (Swarna)</option><option>IR-64</option><option>PR-106</option>
+            <option>BPT-5204 (Samba Masuri)</option><option>CR-1009 (Durga)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Lot Grade (at Entry)</label>
+          <select id="gate_grade">
+            <option>A Grade</option><option>B Grade</option><option>C Grade</option><option>Hold — QC</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>No. of Bags</label>
+          <input type="number" id="gate_bags" placeholder="e.g. 200">
+        </div>
+        <div class="form-group">
+          <label>Stack / Lot Tag</label>
+          <input type="text" id="gate_lot" placeholder="Auto: LOT-2026-0042" readonly style="background:var(--gray-100)">
+        </div>
+      </div>
+
+      <div id="moisture_warning" class="hidden" style="background:#FEF2F2;border:1px solid #FECACA;border-radius:7px;padding:10px 14px;font-size:12px;color:#991B1B;margin-top:8px">
+        ⚠️ Moisture above threshold — lot will be placed on <strong>Quality Hold</strong> pending QC release.
+      </div>
+    </div>
+    <div class="modal-ftr">
+      <button class="btn btn-ghost" onclick="closeModal('gateModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="submitGateEntry()">Generate Gate Pass & GRN</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── GRN MODAL ─── -->
+<div class="overlay" id="grnModal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <h3>📦 New Goods Receipt Note (GRN)</h3>
+      <button class="close-btn" onclick="closeModal('grnModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Linked PO No. *</label>
+          <select id="grn_po">
+            <option>PO-2026-001</option><option>PO-2026-002</option><option>PO-2026-003</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Gate Entry Ref.</label>
+          <select id="grn_gate">
+            <option>GE-2026-041</option><option>GE-2026-042</option><option>GE-2026-043</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Accepted Net Wt (Kg) *</label>
+          <input type="number" id="grn_wt" placeholder="From gate entry">
+        </div>
+        <div class="form-group">
+          <label>Moisture %</label>
+          <input type="number" id="grn_moisture" placeholder="From gate entry">
+        </div>
+        <div class="form-group">
+          <label>GRN Date *</label>
+          <input type="date" id="grn_date">
+        </div>
+        <div class="form-group">
+          <label>Accepted Grade</label>
+          <select id="grn_grade">
+            <option>A Grade</option><option>B Grade</option><option>C Grade</option>
+          </select>
+        </div>
+        <div class="form-group form-full">
+          <label>QC Remarks</label>
+          <textarea id="grn_remarks" placeholder="Quality notes, batch remarks…"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-ftr">
+      <button class="btn btn-ghost" onclick="closeModal('grnModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="submitGRN()">Create GRN & Post to Inventory</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── PO DETAIL MODAL ─── -->
+<div class="overlay" id="detailModal">
+  <div class="modal modal-lg">
+    <div class="modal-hdr">
+      <h3 id="detailTitle">PO Details</h3>
+      <button class="close-btn" onclick="closeModal('detailModal')">✕</button>
+    </div>
+    <div class="modal-body" id="detailBody"></div>
+    <div class="modal-ftr">
+      <button class="btn btn-ghost" onclick="closeModal('detailModal')">Close</button>
+      <button class="btn btn-amber btn-sm" onclick="closeModal('detailModal');openGateEntry()">Create Gate Entry</button>
+      <button class="btn btn-primary btn-sm">Approve PO</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── PAYMENT MODAL ─── -->
+<div class="overlay" id="payModal">
+  <div class="modal">
+    <div class="modal-hdr"><h3>💳 Record Farmer Payment</h3><button class="close-btn" onclick="closeModal('payModal')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group"><label>Vendor / Farmer *</label><select><option>Ramesh Kumar Yadav</option><option>Shyam Lal Farmer</option><option>Suresh Mandal</option></select></div>
+        <div class="form-group"><label>GRN Reference *</label><select><option>GRN-2026-001</option><option>GRN-2026-002</option></select></div>
+        <div class="form-group"><label>Payment Amount (₹) *</label><input type="number" placeholder="e.g. 110000"></div>
+        <div class="form-group"><label>Payment Mode *</label><select><option>NEFT</option><option>RTGS</option><option>Cash</option><option>Cheque</option></select></div>
+        <div class="form-group"><label>Payment Date *</label><input type="date"></div>
+        <div class="form-group"><label>UTR / Ref. No.</label><input type="text" placeholder="Bank transaction reference"></div>
+        <div class="form-group"><label>TDS Deducted (₹)</label><input type="number" placeholder="0"></div>
+        <div class="form-group"><label>Other Deductions (₹)</label><input type="number" placeholder="0"></div>
+      </div>
+    </div>
+    <div class="modal-ftr">
+      <button class="btn btn-ghost" onclick="closeModal('payModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal('payModal');showToast('✅ Payment recorded successfully')">Record Payment</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── RETURN MODAL ─── -->
+<div class="overlay" id="returnModal">
+  <div class="modal">
+    <div class="modal-hdr"><h3>↩️ Purchase Return</h3><button class="close-btn" onclick="closeModal('returnModal')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group"><label>Original GRN No. *</label><select><option>GRN-2026-001</option><option>GRN-2026-002</option></select></div>
+        <div class="form-group"><label>Vendor *</label><select><option>Ramesh Kumar Yadav</option><option>Shyam Lal Farmer</option></select></div>
+        <div class="form-group"><label>Return Quantity (Kg) *</label><input type="number" placeholder="e.g. 2000"></div>
+        <div class="form-group"><label>Return Date *</label><input type="date"></div>
+        <div class="form-group"><label>Return Reason *</label><select><option>Excess Moisture</option><option>Foreign Matter</option><option>Quality Substandard</option><option>Wrong Variety</option><option>Excess Quantity</option></select></div>
+        <div class="form-group"><label>Debit Note Value (₹)</label><input type="number" placeholder="Auto-calculated"></div>
+        <div class="form-group form-full"><label>Remarks</label><textarea placeholder="Additional notes…"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-ftr">
+      <button class="btn btn-ghost" onclick="closeModal('returnModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal('returnModal');showToast('↩️ Return recorded & debit note generated')">Submit & Generate Debit Note</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span id="toastMsg">Done</span></div>
+
+<script>
+// ── DATA ───────────────────────────────────────────────────────────────────────
+const VARIETIES = {
+  'MTU7029': {name:'MTU-7029 (Swarna)', rate:2180, msp:2183},
+  'IR64':    {name:'IR-64',             rate:2150, msp:2183},
+  'PR106':   {name:'PR-106',            rate:2240, msp:2183},
+  'BPT5204': {name:'BPT-5204 (Samba Masuri)', rate:2380, msp:2183},
+  'CR1009':  {name:'CR-1009 (Durga)',   rate:2120, msp:2183},
+  'Sona':    {name:'Sona Masoori',      rate:2450, msp:2183},
+};
+
+const PO_DATA = [
+  {no:'PO-2026-012',vendor:'Ramesh Kumar Yadav',variety:'MTU-7029 (Swarna)',qty:500,rate:2180,grade:'A Grade',date:'2026-06-22',delivery:'2026-06-25',status:'Approved',value:10900000},
+  {no:'PO-2026-011',vendor:'Shyam Lal Farmer',variety:'IR-64',qty:300,rate:2150,grade:'B Grade',date:'2026-06-21',delivery:'2026-06-24',status:'GRN Done',value:6450000},
+  {no:'PO-2026-010',vendor:'Gita Devi Agri',variety:'PR-106',qty:400,rate:2240,grade:'A Grade',date:'2026-06-20',delivery:'2026-06-23',status:'Pending',value:8960000},
+  {no:'PO-2026-009',vendor:'Suresh Mandal',variety:'BPT-5204 (Samba Masuri)',qty:250,rate:2380,grade:'A Grade',date:'2026-06-19',delivery:'2026-06-22',status:'Approved',value:5950000},
+  {no:'PO-2026-008',vendor:'Bijay Agarwal Trading',variety:'MTU-7029 (Swarna)',qty:600,rate:2180,grade:'B Grade',date:'2026-06-18',delivery:'2026-06-21',status:'GRN Done',value:13080000},
+  {no:'PO-2026-007',vendor:'Mohan Rice Suppliers',variety:'Sona Masoori',qty:200,rate:2450,grade:'A Grade',date:'2026-06-17',delivery:'2026-06-20',status:'Hold',value:4900000},
+  {no:'PO-2026-006',vendor:'Ramesh Kumar Yadav',variety:'CR-1009 (Durga)',qty:350,rate:2120,grade:'C Grade',date:'2026-06-16',delivery:'2026-06-19',status:'GRN Done',value:7420000},
+  {no:'PO-2026-005',vendor:'Gita Devi Agri',variety:'IR-64',qty:450,rate:2150,grade:'B Grade',date:'2026-06-15',delivery:'2026-06-18',status:'Approved',value:9675000},
+  {no:'PO-2026-004',vendor:'Suresh Mandal',variety:'PR-106',qty:320,rate:2240,grade:'A Grade',date:'2026-06-14',delivery:'2026-06-17',status:'Pending',value:7168000},
+  {no:'PO-2026-003',vendor:'Mohan Rice Suppliers',variety:'MTU-7029 (Swarna)',qty:480,rate:2180,grade:'A Grade',date:'2026-06-13',delivery:'2026-06-16',status:'GRN Done',value:10464000},
+  {no:'PO-2026-002',vendor:'Shyam Lal Farmer',variety:'BPT-5204 (Samba Masuri)',qty:180,rate:2380,grade:'A Grade',date:'2026-06-12',delivery:'2026-06-15',status:'GRN Done',value:4284000},
+  {no:'PO-2026-001',vendor:'Bijay Agarwal Trading',variety:'Sona Masoori',qty:150,rate:2450,grade:'B Grade',date:'2026-06-11',delivery:'2026-06-14',status:'Pending',value:3675000},
+];
+
+const GRN_DATA = [
+  {no:'GRN-2026-009',po:'PO-2026-011',vendor:'Shyam Lal Farmer',variety:'IR-64',gross:30820,tare:830,net:29990,moisture:14.2,grade:'B Grade',status:'Accepted',date:'2026-06-22'},
+  {no:'GRN-2026-008',po:'PO-2026-012',vendor:'Ramesh Kumar Yadav',variety:'MTU-7029 (Swarna)',gross:51200,tare:1200,net:50000,moisture:13.8,grade:'A Grade',status:'Accepted',date:'2026-06-22'},
+  {no:'GRN-2026-007',po:'PO-2026-008',vendor:'Bijay Agarwal Trading',variety:'MTU-7029 (Swarna)',gross:61100,tare:1100,net:60000,moisture:15.1,grade:'B Grade',status:'Accepted',date:'2026-06-21'},
+  {no:'GRN-2026-006',po:'PO-2026-006',vendor:'Ramesh Kumar Yadav',variety:'CR-1009 (Durga)',gross:35600,tare:600,net:35000,moisture:14.6,grade:'C Grade',status:'Accepted',date:'2026-06-20'},
+  {no:'GRN-2026-005',po:'PO-2026-005',vendor:'Gita Devi Agri',variety:'IR-64',gross:45400,tare:900,net:44500,moisture:16.2,grade:'B Grade',status:'Accepted',date:'2026-06-19'},
+  {no:'GRN-2026-004',po:'PO-2026-010',vendor:'Gita Devi Agri',variety:'PR-106',gross:40300,tare:800,net:39500,moisture:17.8,grade:'Hold',status:'On Hold',date:'2026-06-18'},
+  {no:'GRN-2026-003',po:'PO-2026-003',vendor:'Mohan Rice Suppliers',variety:'MTU-7029 (Swarna)',gross:48700,tare:700,net:48000,moisture:13.5,grade:'A Grade',status:'Accepted',date:'2026-06-17'},
+  {no:'GRN-2026-002',po:'PO-2026-002',vendor:'Shyam Lal Farmer',variety:'BPT-5204 (Samba Masuri)',gross:18400,tare:400,net:18000,moisture:14.0,grade:'A Grade',status:'Accepted',date:'2026-06-16'},
+  {no:'GRN-2026-001',po:'PO-2026-007',vendor:'Mohan Rice Suppliers',variety:'Sona Masoori',gross:20200,tare:200,net:20000,moisture:18.5,grade:'Hold',status:'On Hold',date:'2026-06-15'},
+];
+
+const VENDOR_DATA = [
+  {code:'VND-001',name:'Ramesh Kumar Yadav',type:'Farmer',location:'Nawada, Bihar',mobile:'9876543210',bank:'SBI ****4821',credit:'₹20L',pos:4,pending:'₹3.2L',status:'Active'},
+  {code:'VND-002',name:'Shyam Lal Farmer',type:'Farmer',location:'Darbhanga, Bihar',mobile:'9765432109',bank:'PNB ****2341',credit:'₹15L',pos:3,pending:'₹1.8L',status:'Active'},
+  {code:'VND-003',name:'Gita Devi Agri',type:'Aggregator',location:'Muzaffarpur, Bihar',mobile:'9654321098',bank:'UCO ****7812',credit:'₹30L',pos:2,pending:'₹5.6L',status:'Active'},
+  {code:'VND-004',name:'Suresh Mandal',type:'Farmer',location:'Samastipur, Bihar',mobile:'9543210987',bank:'BOI ****5632',credit:'₹10L',pos:2,pending:'₹2.1L',status:'Active'},
+  {code:'VND-005',name:'Bijay Agarwal Trading',type:'Trader',location:'Patna, Bihar',mobile:'9432109876',bank:'HDFC ****9021',credit:'₹50L',pos:2,pending:'₹4.8L',status:'Active'},
+  {code:'VND-006',name:'Mohan Rice Suppliers',type:'Trader',location:'Hajipur, Bihar',mobile:'9321098765',bank:'Axis ****3411',credit:'₹40L',pos:2,pending:'₹0.9L',status:'On Hold'},
+];
+
+const RATE_DATA = [
+  {variety:'MTU-7029 (Swarna)',grade:'A',min:2150,max:2250,current:2180,msp:2183,season:'Kharif 2025–26',from:'2026-04-01',by:'Purchase Manager'},
+  {variety:'MTU-7029 (Swarna)',grade:'B',min:2050,max:2150,current:2120,msp:2183,season:'Kharif 2025–26',from:'2026-04-01',by:'Purchase Manager'},
+  {variety:'IR-64',grade:'A',min:2100,max:2200,current:2150,msp:2183,season:'Kharif 2025–26',from:'2026-04-01',by:'Purchase Manager'},
+  {variety:'PR-106',grade:'A',min:2180,max:2300,current:2240,msp:2183,season:'Kharif 2025–26',from:'2026-04-01',by:'Purchase Manager'},
+  {variety:'BPT-5204 (Samba Masuri)',grade:'A',min:2320,max:2450,current:2380,msp:2183,season:'Kharif 2025–26',from:'2026-04-01',by:'Purchase Manager'},
+  {variety:'CR-1009 (Durga)',grade:'A',min:2050,max:2180,current:2120,msp:2183,season:'Kharif 2025–26',from:'2026-04-01',by:'Purchase Manager'},
+  {variety:'Sona Masoori',grade:'A',min:2380,max:2520,current:2450,msp:2183,season:'Kharif 2025–26',from:'2026-04-01',by:'Purchase Manager'},
+];
+
+const GATE_DATA = [
+  {no:'GE-2026-042',vehicle:'JH 05 AB 1234',vendor:'Ramesh Kumar Yadav',variety:'MTU-7029',gross:51200,tare:1200,net:50000,moisture:13.8,time:'2026-06-22 09:14',pass:'GP-042',status:'GRN Created'},
+  {no:'GE-2026-041',vehicle:'JH 04 CD 5678',vendor:'Shyam Lal Farmer',variety:'IR-64',gross:30820,tare:830,net:29990,moisture:14.2,time:'2026-06-22 08:45',pass:'GP-041',status:'GRN Created'},
+  {no:'GE-2026-040',vehicle:'BR 01 EF 9101',vendor:'Bijay Agarwal Trading',variety:'MTU-7029',gross:61100,tare:1100,net:60000,moisture:15.1,time:'2026-06-21 14:22',pass:'GP-040',status:'GRN Created'},
+  {no:'GE-2026-039',vehicle:'JH 06 GH 2345',vendor:'Gita Devi Agri',variety:'PR-106',gross:40300,tare:800,net:39500,moisture:17.8,time:'2026-06-18 10:05',pass:'GP-039',status:'On Hold'},
+];
+
+const HOLD_DATA = [
+  {ref:'QH-003',grn:'GRN-2026-001',vendor:'Mohan Rice Suppliers',variety:'Sona Masoori',qty:20000,moisture:18.5,reason:'Moisture > 17%',date:'2026-06-15',qc:'Pending',by:'—'},
+  {ref:'QH-002',grn:'GRN-2026-004',vendor:'Gita Devi Agri',variety:'PR-106',qty:39500,moisture:17.8,reason:'Moisture > 17%',date:'2026-06-18',qc:'Pending',by:'—'},
+  {ref:'QH-001',grn:'GRN-2026-X',vendor:'Bijay Agarwal Trading',variety:'IR-64',qty:5000,moisture:13.1,reason:'Excess Foreign Matter (3.2%)',date:'2026-06-10',qc:'Approved',by:'QC In-charge'},
+];
+
+const RETURN_DATA = [
+  {no:'PR-2026-002',grn:'GRN-2026-004',vendor:'Gita Devi Agri',variety:'PR-106',qty:5000,reason:'Excess Moisture',dn:'DN-2026-002',value:'₹1,12,000',date:'2026-06-19',status:'Completed'},
+  {no:'PR-2026-001',grn:'GRN-2026-X',vendor:'Bijay Agarwal Trading',variety:'IR-64',qty:2000,reason:'Foreign Matter',dn:'DN-2026-001',value:'₹43,000',date:'2026-06-11',status:'Completed'},
+];
+
+const PAY_DATA = [
+  {vendor:'Ramesh Kumar Yadav',grn:'GRN-2026-008',value:'₹10,90,000',advance:'₹2,00,000',deductions:'₹21,800',net:'₹8,68,200',paid:'₹5,00,000',balance:'₹3,68,200',date:'2026-06-23',mode:'NEFT',status:'Partial'},
+  {vendor:'Shyam Lal Farmer',grn:'GRN-2026-009',value:'₹6,45,000',advance:'₹1,00,000',deductions:'₹12,900',net:'₹5,32,100',paid:'₹5,32,100',balance:'₹0',date:'2026-06-23',mode:'NEFT',status:'Paid'},
+  {vendor:'Bijay Agarwal Trading',grn:'GRN-2026-007',value:'₹13,08,000',advance:'₹3,00,000',deductions:'₹26,160',net:'₹9,81,840',paid:'₹0',balance:'₹9,81,840',date:'—',mode:'—',status:'Pending'},
+  {vendor:'Mohan Rice Suppliers',grn:'GRN-2026-003',value:'₹10,46,400',advance:'₹1,50,000',deductions:'₹20,928',net:'₹8,75,472',paid:'₹8,75,472',balance:'₹0',date:'2026-06-18',mode:'RTGS',status:'Paid'},
+  {vendor:'Gita Devi Agri',grn:'GRN-2026-005',value:'₹9,56,750',advance:'₹2,00,000',deductions:'₹19,135',net:'₹7,37,615',paid:'₹3,00,000',balance:'₹4,37,615',date:'2026-06-20',mode:'NEFT',status:'Partial'},
+  {vendor:'Suresh Mandal',grn:'GRN-2026-X',value:'₹5,95,000',advance:'₹80,000',deductions:'₹11,900',net:'₹5,03,100',paid:'₹5,03,100',balance:'₹0',date:'2026-06-15',mode:'Cash',status:'Paid'},
+];
+
+const GRADE_DATA = [
+  {code:'GRD-A',name:'A Grade',moisture:14,broken:5,fm:1.5,premium:'+₹30/Qt','varieties':'All',status:'Active'},
+  {code:'GRD-B',name:'B Grade',moisture:16,broken:10,fm:2.5,premium:'Standard','varieties':'All',status:'Active'},
+  {code:'GRD-C',name:'C Grade',moisture:17,broken:15,fm:3.5,premium:'-₹40/Qt','varieties':'All',status:'Active'},
+  {code:'GRD-H',name:'Hold — QC',moisture:99,broken:99,fm:99,premium:'—','varieties':'All',status:'Active'},
+];
+
+const COST_DATA = GRN_DATA.slice(0,6).map(g => {
+  const baseRate = 2200;
+  const paddy = Math.round(g.net * baseRate / 100);
+  const freight = Math.round(g.net * 3.8);
+  const loading = Math.round(g.net * 0.6);
+  const unloading = Math.round(g.net * 0.5);
+  return {grn:g.no,vendor:g.vendor,variety:g.variety,qty:g.net,paddy,freight,loading,unloading,other:500,total:paddy+freight+loading+unloading+500,perQt:Math.round((paddy+freight+loading+unloading+500)/(g.net/100))};
+});
+
+// ── UTILS ──────────────────────────────────────────────────────────────────────
+const INR = n => '₹' + Number(n).toLocaleString('en-IN');
+const fmt  = n => Number(n).toLocaleString('en-IN');
+function statusHtml(s){
+  const m={
+    'Approved':'s-approved','Pending':'s-pending','GRN Done':'s-grn',
+    'Hold':'s-hold','Partial':'s-partial','Closed':'s-closed',
+    'Accepted':'s-approved','On Hold':'s-hold','Paid':'s-approved',
+    'Active':'s-approved','Completed':'s-grn',
+  };
+  return `<span class="status ${m[s]||'s-closed'}"><span class="s-dot"></span>${s}</span>`;
+}
+
+// ── SECTION SWITCH ─────────────────────────────────────────────────────────────
+const SECTIONS = ['dashboard','po','grn','gate','vendors','rates','grades','payments','returns','holds','costtrack','reports'];
+const TITLES = {
+  dashboard:'Dashboard',po:'Purchase Orders',grn:'GRN Register',gate:'Gate Entry Log',
+  vendors:'Vendor & Farmer Master',rates:'Rate Card',grades:'Paddy Grade Master',
+  payments:'Payments & Advance Ledger',returns:'Purchase Returns',holds:'Quality Hold Register',
+  costtrack:'Procurement Cost Tracking',reports:'Reports & Export'
+};
+const SUBS = {
+  dashboard:'Procurement Overview · Today',po:'All Purchase Orders',grn:'Goods Receipt Notes',
+  gate:'Weighbridge Gate Entry',vendors:'Vendor/Farmer Database',rates:'Current Rate Card',
+  grades:'Grade Definitions & Tolerances',payments:'Farmer Payment Ledger',
+  returns:'Returns & Debit Notes',holds:'Quality Hold Lots',
+  costtrack:'Cost Breakdown by Lot',reports:'Export Reports'
+};
+
+function showSection(id){
+  SECTIONS.forEach(s=>{
+    document.getElementById('sec-'+s).classList.toggle('hidden', s!==id);
+  });
+  document.querySelectorAll('.sb-item').forEach(b=>b.classList.remove('active'));
+  event.currentTarget && event.currentTarget.classList.add('active');
+  document.getElementById('toolbarTitle').textContent = TITLES[id]||id;
+  document.getElementById('toolbarSub').textContent = SUBS[id]||'';
+  if(id==='po') renderPOTable('poTbody2');
+  if(id==='grn') renderGRN();
+  if(id==='gate') renderGate();
+  if(id==='vendors') renderVendors();
+  if(id==='rates') renderRates();
+  if(id==='grades') renderGrades();
+  if(id==='payments') renderPayments();
+  if(id==='returns') renderReturns();
+  if(id==='holds') renderHolds();
+  if(id==='costtrack') renderCosts();
+}
+
+// ── RENDER TABLES ──────────────────────────────────────────────────────────────
+function renderPOTable(tbodyId, data){
+  const D = data || PO_DATA;
+  const el = document.getElementById(tbodyId);
+  if(!el) return;
+  el.innerHTML = D.map(p=>`<tr>
+    <td class="td-mono td-bold">${p.no}</td>
+    <td class="td-bold">${p.vendor}</td>
+    <td>${p.variety}</td>
+    <td class="td-mono">${fmt(p.qty)} Qt</td>
+    <td class="td-mono">${INR(p.rate)}</td>
+    <td class="td-mono td-bold">${INR(p.rate*p.qty)}</td>
+    <td>${p.grade}</td>
+    <td class="td-mono">${p.date}</td>
+    <td class="td-mono">${p.delivery||'—'}</td>
+    <td>${statusHtml(p.status)}</td>
+    <td><div class="td-action">
+      <button class="icon-btn" title="View" onclick='showDetail(${JSON.stringify(p)})'>👁</button>
+      <button class="icon-btn" title="Edit">✏️</button>
+      <button class="icon-btn" title="Print">🖨️</button>
+    </div></td>
+  </tr>`).join('');
+}
+
+function renderGRN(){
+  document.getElementById('grnTbody').innerHTML = GRN_DATA.map(g=>`<tr>
+    <td class="td-mono td-bold">${g.no}</td>
+    <td class="td-mono">${g.po}</td>
+    <td>${g.vendor}</td>
+    <td>${g.variety}</td>
+    <td class="td-mono">${fmt(g.gross)} Kg</td>
+    <td class="td-mono">${fmt(g.tare)} Kg</td>
+    <td class="td-mono td-bold">${fmt(g.net)} Kg</td>
+    <td class="td-mono" style="color:${g.moisture>17?'var(--red)':'var(--green)'};font-weight:600">${g.moisture}%</td>
+    <td>${g.grade}</td>
+    <td>${statusHtml(g.status)}</td>
+    <td class="td-mono">${g.date}</td>
+    <td><div class="td-action">
+      <button class="icon-btn" title="View">👁</button>
+      <button class="icon-btn" title="Print">🖨️</button>
+    </div></td>
+  </tr>`).join('');
+  document.getElementById('grnCount').textContent = GRN_DATA.length + ' records';
+}
+
+function renderGate(){
+  document.getElementById('gateTbody').innerHTML = GATE_DATA.map(g=>`<tr>
+    <td class="td-mono td-bold">${g.no}</td>
+    <td class="td-mono">${g.vehicle}</td>
+    <td>${g.vendor}</td>
+    <td>${g.variety}</td>
+    <td class="td-mono">${fmt(g.gross)}</td>
+    <td class="td-mono">${fmt(g.tare)}</td>
+    <td class="td-mono td-bold">${fmt(g.net)}</td>
+    <td class="td-mono" style="color:${g.moisture>17?'var(--red)':'var(--green)'};font-weight:700">${g.moisture}%</td>
+    <td class="td-mono" style="font-size:11px">${g.time}</td>
+    <td class="td-mono" style="color:var(--blue);font-weight:600">${g.pass}</td>
+    <td>${statusHtml(g.status)}</td>
+  </tr>`).join('');
+}
+
+function renderVendors(){
+  document.getElementById('vendorTbody').innerHTML = VENDOR_DATA.map(v=>`<tr>
+    <td class="td-mono td-bold">${v.code}</td>
+    <td class="td-bold">${v.name}</td>
+    <td><span class="status ${v.type==='Farmer'?'s-grn':v.type==='Trader'?'s-partial':'s-approved'}">${v.type}</span></td>
+    <td>${v.location}</td>
+    <td class="td-mono">${v.mobile}</td>
+    <td class="td-mono">${v.bank}</td>
+    <td class="td-mono">${v.credit}</td>
+    <td class="td-mono">${v.pos}</td>
+    <td class="td-mono" style="color:var(--amber-dark);font-weight:600">${v.pending}</td>
+    <td>${statusHtml(v.status)}</td>
+    <td><div class="td-action">
+      <button class="icon-btn" title="View">👁</button>
+      <button class="icon-btn" title="Edit">✏️</button>
+    </div></td>
+  </tr>`).join('');
+}
+
+function renderRates(){
+  document.getElementById('rateTbody').innerHTML = RATE_DATA.map(r=>`<tr>
+    <td class="td-bold">${r.variety}</td>
+    <td>${r.grade} Grade</td>
+    <td class="td-mono">${INR(r.min)}</td>
+    <td class="td-mono">${INR(r.max)}</td>
+    <td class="td-mono td-bold" style="color:var(--green)">${INR(r.current)}</td>
+    <td class="td-mono">${INR(r.msp)}</td>
+    <td>${r.season}</td>
+    <td class="td-mono">${r.from}</td>
+    <td>${r.by}</td>
+  </tr>`).join('');
+}
+
+function renderGrades(){
+  document.getElementById('gradeTbody').innerHTML = GRADE_DATA.map(g=>`<tr>
+    <td class="td-mono td-bold">${g.code}</td>
+    <td class="td-bold">${g.name}</td>
+    <td class="td-mono">≤ ${g.moisture}%</td>
+    <td class="td-mono">≤ ${g.broken}%</td>
+    <td class="td-mono">≤ ${g.fm}%</td>
+    <td class="td-mono" style="color:var(--green-mid);font-weight:600">${g.premium}</td>
+    <td>${g.varieties}</td>
+    <td>${statusHtml(g.status)}</td>
+  </tr>`).join('');
+}
+
+function renderPayments(){
+  document.getElementById('payTbody').innerHTML = PAY_DATA.map(p=>`<tr>
+    <td class="td-bold">${p.vendor}</td>
+    <td class="td-mono">${p.grn}</td>
+    <td class="td-mono">${p.value}</td>
+    <td class="td-mono" style="color:var(--blue);font-weight:600">${p.advance}</td>
+    <td class="td-mono" style="color:var(--red)">${p.deductions}</td>
+    <td class="td-mono td-bold">${p.net}</td>
+    <td class="td-mono" style="color:var(--green);font-weight:600">${p.paid}</td>
+    <td class="td-mono" style="color:${p.balance==='₹0'?'var(--gray-400)':'var(--amber-dark)'};font-weight:700">${p.balance}</td>
+    <td class="td-mono">${p.date}</td>
+    <td>${p.mode}</td>
+    <td>${statusHtml(p.status)}</td>
+  </tr>`).join('');
+}
+
+function renderReturns(){
+  document.getElementById('returnTbody').innerHTML = RETURN_DATA.map(r=>`<tr>
+    <td class="td-mono td-bold">${r.no}</td>
+    <td class="td-mono">${r.grn}</td>
+    <td>${r.vendor}</td>
+    <td>${r.variety}</td>
+    <td class="td-mono">${fmt(r.qty)} Kg</td>
+    <td>${r.reason}</td>
+    <td class="td-mono" style="color:var(--blue);font-weight:600">${r.dn}</td>
+    <td class="td-mono td-bold">${r.value}</td>
+    <td class="td-mono">${r.date}</td>
+    <td>${statusHtml(r.status)}</td>
+  </tr>`).join('');
+}
+
+function renderHolds(){
+  document.getElementById('holdTbody').innerHTML = HOLD_DATA.map(h=>`<tr>
+    <td class="td-mono td-bold" style="color:var(--red)">${h.ref}</td>
+    <td class="td-mono">${h.grn}</td>
+    <td>${h.vendor}</td>
+    <td>${h.variety}</td>
+    <td class="td-mono">${fmt(h.qty)} Kg</td>
+    <td class="td-mono" style="color:var(--red);font-weight:700">${h.moisture}%</td>
+    <td>${h.reason}</td>
+    <td class="td-mono">${h.date}</td>
+    <td>${statusHtml(h.qc==='Approved'?'Approved':h.qc==='Pending'?'Pending':'Hold')}</td>
+    <td>${h.by}</td>
+    <td><div class="td-action">
+      <button class="icon-btn" title="Release" onclick="showToast('✅ Hold released — moved to GRN')">✅</button>
+      <button class="icon-btn" title="Reject">❌</button>
+    </div></td>
+  </tr>`).join('');
+}
+
+function renderCosts(){
+  document.getElementById('costTbody').innerHTML = COST_DATA.map(c=>`<tr>
+    <td class="td-mono td-bold">${c.grn}</td>
+    <td>${c.vendor}</td>
+    <td>${c.variety}</td>
+    <td class="td-mono">${fmt(c.qty)} Kg</td>
+    <td class="td-mono">${INR(c.paddy)}</td>
+    <td class="td-mono">${INR(c.freight)}</td>
+    <td class="td-mono">${INR(c.loading)}</td>
+    <td class="td-mono">${INR(c.unloading)}</td>
+    <td class="td-mono">${INR(c.other)}</td>
+    <td class="td-mono td-bold" style="color:var(--green)">${INR(c.total)}</td>
+    <td class="td-mono" style="color:var(--amber-dark);font-weight:700">${INR(c.perQt)}/Qt</td>
+  </tr>`).join('');
+}
+
+// ── FILTERS ────────────────────────────────────────────────────────────────────
+let activeFilter = '';
+function filterPO(q){
+  const filtered = PO_DATA.filter(p=>
+    p.no.toLowerCase().includes(q.toLowerCase()) ||
+    p.vendor.toLowerCase().includes(q.toLowerCase()) ||
+    p.variety.toLowerCase().includes(q.toLowerCase())
+  ).filter(p=> !activeFilter || p.status===activeFilter);
+  renderPOTable('poTbody', filtered);
+  renderPOTable('poTbody2', filtered);
+  document.getElementById('poCount').textContent = 'Showing ' + filtered.length + ' records';
+}
+function filterPOStatus(s){
+  activeFilter = s;
+  const filtered = PO_DATA.filter(p=> !s || p.status===s);
+  renderPOTable('poTbody', filtered);
+  renderPOTable('poTbody2', filtered);
+  document.getElementById('poCount').textContent = 'Showing ' + filtered.length + ' records';
+}
+function filterGRN(q){
+  const filtered = GRN_DATA.filter(g=>g.no.toLowerCase().includes(q)||g.vendor.toLowerCase().includes(q)||g.po.toLowerCase().includes(q));
+  document.getElementById('grnTbody').innerHTML = filtered.map(g=>`<tr><td class="td-mono td-bold">${g.no}</td><td class="td-mono">${g.po}</td><td>${g.vendor}</td><td>${g.variety}</td><td class="td-mono">${fmt(g.gross)} Kg</td><td class="td-mono">${fmt(g.tare)} Kg</td><td class="td-mono td-bold">${fmt(g.net)} Kg</td><td class="td-mono">${g.moisture}%</td><td>${g.grade}</td><td>${statusHtml(g.status)}</td><td class="td-mono">${g.date}</td><td></td></tr>`).join('');
+}
+function filterVendors(q){
+  const f = VENDOR_DATA.filter(v=>v.name.toLowerCase().includes(q.toLowerCase())||v.location.toLowerCase().includes(q.toLowerCase()));
+  // re-render with filtered
+  document.getElementById('vendorTbody').innerHTML = f.map(v=>`<tr><td class="td-mono td-bold">${v.code}</td><td class="td-bold">${v.name}</td><td>${v.type}</td><td>${v.location}</td><td class="td-mono">${v.mobile}</td><td class="td-mono">${v.bank}</td><td class="td-mono">${v.credit}</td><td class="td-mono">${v.pos}</td><td class="td-mono">${v.pending}</td><td>${statusHtml(v.status)}</td><td></td></tr>`).join('');
+}
+
+// ── CHARTS ─────────────────────────────────────────────────────────────────────
+function initCharts(){
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const intake = [128, 142, 115, 162, 95, 138, 62];
+
+  const cfg = {
+    plugins:{legend:{labels:{color:'#6B7280',font:{family:"'Lexend'",size:10},boxWidth:9,padding:9}}},
+    scales:{
+      x:{grid:{color:'rgba(229,231,235,.6)',drawBorder:false},ticks:{color:'#9CA3AF',font:{size:10}}},
+      y:{grid:{color:'rgba(229,231,235,.6)',drawBorder:false},ticks:{color:'#9CA3AF',font:{size:10}}},
+    },
+  };
+
+  new Chart(document.getElementById('intakeChart'),{
+    type:'bar',
+    data:{labels:days,datasets:[{
+      label:'MT Received',data:intake,
+      backgroundColor:'rgba(16,185,129,.7)',borderColor:'rgba(16,185,129,1)',
+      borderWidth:0,borderRadius:5,borderSkipped:false,
+    }]},
+    options:{responsive:true,maintainAspectRatio:false,...cfg,plugins:{...cfg.plugins,legend:{display:false}}}
+  });
+
+  new Chart(document.getElementById('varietyChart'),{
+    type:'doughnut',
+    data:{
+      labels:['MTU-7029','IR-64','PR-106','BPT-5204','CR-1009','Sona Masoori'],
+      datasets:[{
+        data:[312, 195, 142, 98, 55, 40],
+        backgroundColor:['#10B981','#3B82F6','#F59E0B','#8B5CF6','#EF4444','#F97316'],
+        borderWidth:2,borderColor:'#fff',hoverOffset:6,
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,cutout:'56%',
+      plugins:{legend:{position:'right',labels:{color:'#4B5563',font:{family:"'Lexend'",size:10},boxWidth:9,padding:7}}}
+    }
+  });
+}
+
+// ── PO CALCULATIONS ────────────────────────────────────────────────────────────
+function calcPOTotal(){
+  const qty    = parseFloat(document.getElementById('po_qty').value)||0;
+  const rate   = parseFloat(document.getElementById('po_rate').value)||0;
+  const freight= parseFloat(document.getElementById('po_freight').value)||0;
+  const loading= parseFloat(document.getElementById('po_loading').value)||0;
+  const advance= parseFloat(document.getElementById('po_advance').value)||0;
+  const paddy  = qty * rate;
+  const frt    = qty * freight;
+  const ld     = qty * loading;
+  const total  = paddy + frt + ld;
+  const net    = total - advance;
+  document.getElementById('calc_paddy').textContent  = INR(paddy);
+  document.getElementById('calc_freight').textContent= INR(frt);
+  document.getElementById('calc_loading').textContent= INR(ld);
+  document.getElementById('calc_advance').textContent= INR(advance);
+  document.getElementById('calc_total').textContent  = INR(total);
+  document.getElementById('calc_net').textContent    = INR(net);
+}
+
+function autoRate(){
+  const v = document.getElementById('po_variety').value;
+  if(VARIETIES[v]){
+    document.getElementById('po_rate').value = VARIETIES[v].rate;
+    document.getElementById('po_rate_hint').textContent = 'MSP 2025–26: ₹' + VARIETIES[v].msp.toLocaleString('en-IN') + '/Qt';
+    calcPOTotal();
+  }
+}
+
+function calcNetWeight(){
+  const g = parseFloat(document.getElementById('gate_gross').value)||0;
+  const t = parseFloat(document.getElementById('gate_tare').value)||0;
+  document.getElementById('gate_net').value = g-t > 0 ? g-t : '';
+}
+
+function checkMoisture(){
+  const m = parseFloat(document.getElementById('gate_moisture').value)||0;
+  const warn = document.getElementById('moisture_warning');
+  warn.classList.toggle('hidden', m <= 17);
+  document.getElementById('gate_grade').value = m > 17 ? 'Hold — QC' : 'A Grade';
+}
+
+// ── MODALS ─────────────────────────────────────────────────────────────────────
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function openNewPO(){
+  // set today
+  document.getElementById('po_date').value = new Date().toISOString().split('T')[0];
+  calcPOTotal();
+  openModal('poModal');
+}
+function openGateEntry(){
+  const now = new Date();
+  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+  document.getElementById('gate_time').value = now.toISOString().slice(0,16);
+  document.getElementById('gate_lot').value  = 'LOT-2026-' + String(Math.floor(Math.random()*90)+10);
+  openModal('gateModal');
+}
+function openNewGRN(){
+  document.getElementById('grn_date').value = new Date().toISOString().split('T')[0];
+  openModal('grnModal');
+}
+function openNewVendor(){ showToast('Vendor form coming in next build'); }
+function openNewRate(){   showToast('Rate form coming in next build'); }
+function openPaymentModal(){ openModal('payModal'); }
+function openReturnModal(){ openModal('returnModal'); }
+
+function showDetail(p){
+  document.getElementById('detailTitle').textContent = 'Purchase Order — ' + p.no;
+  document.getElementById('detailBody').innerHTML = `
+    <div class="detail-grid">
+      <div class="detail-section">
+        <div class="detail-section-title">Order Information</div>
+        <div class="detail-row"><span class="detail-key">PO Number</span><span class="detail-val" style="font-family:'JetBrains Mono',monospace">${p.no}</span></div>
+        <div class="detail-row"><span class="detail-key">PO Date</span><span class="detail-val">${p.date}</span></div>
+        <div class="detail-row"><span class="detail-key">Delivery Date</span><span class="detail-val">${p.delivery||'—'}</span></div>
+        <div class="detail-row"><span class="detail-key">Status</span><span class="detail-val">${statusHtml(p.status)}</span></div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-section-title">Vendor Details</div>
+        <div class="detail-row"><span class="detail-key">Vendor / Farmer</span><span class="detail-val">${p.vendor}</span></div>
+        <div class="detail-row"><span class="detail-key">Paddy Variety</span><span class="detail-val">${p.variety}</span></div>
+        <div class="detail-row"><span class="detail-key">Grade</span><span class="detail-val">${p.grade}</span></div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-section-title">Quantity & Value</div>
+        <div class="detail-row"><span class="detail-key">Ordered Qty</span><span class="detail-val">${fmt(p.qty)} Qt (${fmt(p.qty*100)} Kg)</span></div>
+        <div class="detail-row"><span class="detail-key">Rate</span><span class="detail-val">${INR(p.rate)} / Qt</span></div>
+        <div class="detail-row"><span class="detail-key">Paddy Value</span><span class="detail-val">${INR(p.rate*p.qty)}</span></div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-section-title">Cost Breakup</div>
+        <div class="detail-row"><span class="detail-key">Freight (~₹38/Qt)</span><span class="detail-val">${INR(p.qty*38)}</span></div>
+        <div class="detail-row"><span class="detail-key">Loading (~₹6/Qt)</span><span class="detail-val">${INR(p.qty*6)}</span></div>
+        <div class="detail-row"><span class="detail-key"><strong>Gross Total</strong></span><span class="detail-val" style="color:var(--green);font-size:14px">${INR(p.rate*p.qty + p.qty*44)}</span></div>
+      </div>
+    </div>
+  `;
+  openModal('detailModal');
+}
+
+// ── FORM SUBMITS ───────────────────────────────────────────────────────────────
+function submitPO(){
+  const vendor = document.getElementById('po_vendor').value;
+  const qty    = document.getElementById('po_qty').value;
+  if(!vendor || !qty){ showToast('⚠️ Please fill all required fields'); return; }
+  closeModal('poModal');
+  const newNo = 'PO-2026-0' + (PO_DATA.length+1);
+  showToast('✅ ' + newNo + ' submitted for approval');
+  document.getElementById('poBadge').textContent = PO_DATA.length + 1;
+}
+
+function saveDraftPO(){ closeModal('poModal'); showToast('📝 PO saved as draft'); }
+
+function submitGateEntry(){
+  const vehicle = document.getElementById('gate_vehicle').value;
+  const net     = document.getElementById('gate_net').value;
+  if(!vehicle || !net){ showToast('⚠️ Fill vehicle number and weights'); return; }
+  closeModal('gateModal');
+  showToast('✅ Gate Pass generated · GRN auto-created');
+  document.getElementById('grnBadge').textContent = parseInt(document.getElementById('grnBadge').textContent) + 1;
+}
+
+function submitGRN(){
+  closeModal('grnModal');
+  showToast('✅ GRN created and posted to Inventory');
+}
+
+// ── EXPORT ─────────────────────────────────────────────────────────────────────
+function exportExcel(){
+  const wb = XLSX.utils.book_new();
+  const rows = PO_DATA.map(p=>({
+    'PO No.':p.no,'Vendor':p.vendor,'Variety':p.variety,
+    'Qty (Qt)':p.qty,'Rate (₹/Qt)':p.rate,'Value (₹)':p.rate*p.qty,
+    'Grade':p.grade,'Date':p.date,'Status':p.status
+  }));
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows), 'Purchase Orders');
+  const grnRows = GRN_DATA.map(g=>({'GRN No.':g.no,'PO':g.po,'Vendor':g.vendor,'Variety':g.variety,'Net Wt (Kg)':g.net,'Moisture %':g.moisture,'Grade':g.grade,'Status':g.status,'Date':g.date}));
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(grnRows), 'GRN Register');
+  XLSX.writeFile(wb,'JMB_Procurement_Report_'+new Date().toISOString().split('T')[0]+'.xlsx');
+  showToast('📊 Excel report downloaded');
+}
+
+// ── TOAST ──────────────────────────────────────────────────────────────────────
+function showToast(msg){
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3200);
+}
+
+// ── CLOSE OVERLAYS ON CLICK OUTSIDE ───────────────────────────────────────────
+document.querySelectorAll('.overlay').forEach(o=>{
+  o.addEventListener('click', e=>{ if(e.target===o) o.classList.remove('open'); });
+});
+
+// ── INIT ───────────────────────────────────────────────────────────────────────
+window.addEventListener('load', ()=>{
+  renderPOTable('poTbody');
+  renderPOTable('poTbody2');
+  initCharts();
+  const now = new Date();
+  document.getElementById('chartWeekLabel').textContent =
+    'Week of ' + now.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+});
+</script>
+</body>
+</html>
